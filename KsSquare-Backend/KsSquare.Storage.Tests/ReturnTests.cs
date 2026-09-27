@@ -1,0 +1,31 @@
+﻿using KsSquare.Application.Features.Orders;
+using KsSquare.Application.Features.Products.Services;
+using KsSquare.Domain.Entities;
+namespace KsSquare.Storage.Tests;
+public sealed class ReturnTests
+{
+ private static CustomerOrder Order(Guid? custom = null) => new(Guid.NewGuid(),Guid.NewGuid(),"hash","Test","test@example.test","1234567890","123 Test Street, Test City","[]",100,custom);
+ private static CustomerOrder Delivered(){var o=Order();o.ChangeStatus("Processing");o.ChangeStatus("Shipped");o.ChangeStatus("Delivered");return o;}
+ private static OrderItemDto Item(bool? eligible=true)=>new(Guid.NewGuid(),"Test",1,100,[],eligible);
+ private static ReturnRequestDto Request(string status="Requested")=>new(Guid.NewGuid(),0,"Change of mind","Please return this piece.",DateTimeOffset.UtcNow,status,null,status=="Approved"?50m:null,null,[],[]);
+ [Fact] public void DeliveryDateIsRecordedOnce(){var o=Delivered();var date=o.DeliveredAt;o.ChangeStatus("Delivered");Assert.Equal(date,o.DeliveredAt);Assert.Equal(3,o.Version);}
+ [Fact] public void SevenDayBoundaryIsInclusive(){var o=Delivered();Assert.Null(ReturnRules.Restriction(o,Item(),o.DeliveredAt!.Value.AddDays(7)));Assert.NotNull(ReturnRules.Restriction(o,Item(),o.DeliveredAt.Value.AddDays(7).AddTicks(1)));}
+ [Fact] public void UndeliveredOrdersCannotBeReturned(){Assert.NotNull(ReturnRules.Restriction(Order(),Item(),DateTimeOffset.UtcNow));}
+ [Theory][InlineData(false)]public void NonreturnableSnapshotsAreBlocked(bool? eligible){Assert.NotNull(ReturnRules.Restriction(Delivered(),Item(eligible),DateTimeOffset.UtcNow));}
+ [Fact] public void LegacyRegularSnapshotCanRequestReview(){Assert.Null(ReturnRules.Restriction(Delivered(),Item(null),DateTimeOffset.UtcNow));}
+ [Fact] public void LegacyNameSnapshotRemainsExcluded(){Assert.NotNull(ReturnRules.Restriction(Delivered(),Item(null) with { Details=["Name: AB"] },DateTimeOffset.UtcNow));}
+ [Fact] public void LegacyMissingDeliveryDateCanRequestReview(){var o=Delivered();typeof(CustomerOrder).GetProperty("DeliveredAt")!.SetValue(o,null);Assert.Null(ReturnRules.Restriction(o,Item(null),DateTimeOffset.UtcNow));Assert.Null(o.DeliveredAt);}
+ [Fact] public void CustomQuotesCannotBeReturned(){Assert.Contains("Custom",ReturnRules.Restriction(Order(Guid.NewGuid()),Item(),DateTimeOffset.UtcNow));}
+ [Fact] public void StandardAndPersonalizedPricingSnapshotEligibility(){var normal=new Product("Ring","R","",100,0,Guid.NewGuid(),true,true);Assert.True(OrderPricing.Price(normal,new(normal.Id,1,[],null)).IsReturnable);var named=new Product("Name pendant","N","",100,0,Guid.NewGuid(),true,true,true,100,10);Assert.False(OrderPricing.Price(named,new(named.Id,1,[],"AB")).IsReturnable);var final=new Product("Engraved watch","W","",100,0,Guid.NewGuid(),true,true,isFinalSale:true);Assert.True(OrderPricing.Price(final,new(final.Id,1,[],null)).IsReturnable);}
+ [Fact] public void AgreementNeedsCustomerConversation(){Assert.Throws<CatalogValidationException>(()=>ReturnRules.Review(Request("Approved"),new("AgreeRefund","Shipping deduction agreed.",80,false,0),100,true,Guid.NewGuid(),DateTimeOffset.UtcNow));}
+ [Fact] public void AgreementDoesNotTransferMoney(){var r=ReturnRules.Review(Request("Approved"),new("AgreeRefund","Shipping deduction agreed.",80,false,0,true),100,false,Guid.NewGuid(),DateTimeOffset.UtcNow);Assert.Equal("Approved",r.Status);Assert.Equal(80m,r.RefundAmount);Assert.Null(r.RefundReference);Assert.Single(r.History);}
+ [Fact] public void LegacyRegularFinalSaleCanBeRequested(){Assert.Null(ReturnRules.Restriction(Delivered(),Item(false) with {ReturnRestriction="This item is final sale."},DateTimeOffset.UtcNow));}
+ [Fact] public void RefundMustMatchAgreement(){Assert.Throws<CatalogValidationException>(()=>ReturnRules.Review(Request("Approved"),new("Refund","Received and inspected.",40,true,0),100,true,Guid.NewGuid(),DateTimeOffset.UtcNow));}
+ [Fact] public void ApprovalDoesNotRefund(){var r=ReturnRules.Review(Request(),new("Approve","Send to the return address.",100,false,0),100,true,Guid.NewGuid(),DateTimeOffset.UtcNow);Assert.Equal("Approved",r.Status);Assert.Null(r.RefundAmount);Assert.Null(r.RefundReference);Assert.Single(r.History);}
+ [Theory][InlineData(-1)][InlineData(100.01)][InlineData(0.001)]public void InvalidAmountsRejected(decimal amount){Assert.Throws<CatalogValidationException>(()=>ReturnRules.Review(Request("Approved"),new("Refund","Inspected and approved.",amount,true,0),100,true,Guid.NewGuid(),DateTimeOffset.UtcNow));}
+ [Theory][InlineData(0)][InlineData(40.25)][InlineData(100)]public void AdminChoosesRefundAmount(decimal amount){var id=Guid.NewGuid();var r=ReturnRules.Review(Request("Approved") with { RefundAmount=amount },new("Refund","Inspected and approved.",amount,true,0),100,true,id,DateTimeOffset.UtcNow);Assert.Equal(amount,r.RefundAmount);Assert.Equal("Refunded",r.Status);Assert.StartsWith("DEMO-REFUND-",r.RefundReference);Assert.Equal(id,r.History[0].AdminId);}
+ [Fact] public void RefundRequiresInspection(){Assert.Throws<CatalogValidationException>(()=>ReturnRules.Review(Request("Approved"),new("Refund","Inspected and approved.",50,false,0),100,true,Guid.NewGuid(),DateTimeOffset.UtcNow));}
+ [Fact] public void LiveRefundCannotBeSimulated(){Assert.Throws<CatalogValidationException>(()=>ReturnRules.Review(Request("Approved"),new("Refund","Inspected and approved.",50,true,0),100,false,Guid.NewGuid(),DateTimeOffset.UtcNow));}
+ [Theory][InlineData("Requested")][InlineData("Refunded")][InlineData("Declined")]public void RefundRequiresApprovedState(string status){Assert.Throws<CatalogConflictException>(()=>ReturnRules.Review(Request(status),new("Refund","Inspected and approved.",50,true,0),100,true,Guid.NewGuid(),DateTimeOffset.UtcNow));}
+ [Theory][InlineData("Requested")][InlineData("Approved")]public void DeclineRequiresExplanationAndRecordsDecision(string status){Assert.Throws<CatalogValidationException>(()=>ReturnRules.Review(Request(status),new("Decline","",null,false,0),100,true,Guid.NewGuid(),DateTimeOffset.UtcNow));var r=ReturnRules.Review(Request(status),new("Decline","Item does not meet the conditions.",null,false,0),100,true,Guid.NewGuid(),DateTimeOffset.UtcNow);Assert.Equal("Declined",r.Status);Assert.Null(r.RefundAmount);}
+}

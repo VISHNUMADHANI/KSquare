@@ -1,0 +1,9 @@
+// Show errors after a control is visited or a form marks it touched on submit.
+body input:not([type='checkbox']):not([type='radio']), body textarea, body select {
+  &.ng-invalid.ng-touched:not(:disabled), &[aria-invalid='true']:not(:disabled) {
+    border-color: #b42318 !important;
+    box-shadow: 0 0 0 1px #b42318 !important;
+    &:focus { outline: 2px solid #b42318; outline-offset: 2px; }
+  }
+}
+.field-validation-message { color: #b42318; font-size: 13px; line-height: 1.5; font-weight: 400; }

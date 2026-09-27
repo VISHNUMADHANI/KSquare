@@ -1,0 +1,38 @@
+<section class="admin-reviews">
+<header><div><p>Customer content</p><h1>Reviews</h1><p>Check product feedback, photos and videos before publishing.</p></div><button type="button" class="primary" (click)="startImport()">+ Add customer review</button><label>Status<select [(ngModel)]="status" (change)="filter()" [disabled]="loading()||!!busy()"><option>Pending</option><option>Published</option><option>Rejected</option></select></label></header>
+<p class="guidance">Moderate for spam, personal information and inappropriate content. Apply the same standard to every star rating.</p>
+@if(error()){<p role="alert">{{error()}} <button (click)="load()">Refresh</button></p>}
+@if(message()){<p role="status">{{message()}}</p>}
+@if(loading()){<p role="status">Loading reviews...</p>}@else{
+<div class="review-list">@for(entry of items();track entry.review.id){@let r=entry.review;
+<button type="button" class="review-row" (click)="open(entry)" aria-haspopup="dialog">
+<span class="avatar">{{r.displayName.slice(0,1).toUpperCase()}}</span>
+<span class="row-copy"><strong>{{r.displayName}} <span class="product-name">· {{entry.productName}}</span></strong><span class="preview">{{r.body}}</span><span class="row-meta">{{r.createdAt|date:'mediumDate'}} @if(r.media.length){ · {{r.media.length}} attachment(s)}</span></span>
+<span class="row-rating"><span class="stars" [attr.aria-label]="r.rating+' out of 5 stars'">{{'★'.repeat(r.rating)}}{{'☆'.repeat(5-r.rating)}}</span><span class="status-badge">{{status}}</span></span><span class="row-arrow" aria-hidden="true">→</span>
+</button>}@empty{<div class="empty">No {{status.toLowerCase()}} reviews.</div>}</div>}
+@if(count()>20){<nav aria-label="Review pages"><button [disabled]="page===1||loading()||!!busy()" (click)="paginate(-1)">Previous</button><span>Page {{page}}</span><button [disabled]="page*20>=count()||loading()||!!busy()" (click)="paginate(1)">Next</button></nav>}
+</section>
+@if(selected();as entry){@let r=entry.review;
+<div class="review-backdrop" (click)="close()"><section class="review-dialog" role="dialog" aria-modal="true" aria-labelledby="review-dialog-title" [ksDialogFocus]="true" (ksDialogDismiss)="close()" (click)="$event.stopPropagation()">
+<header class="dialog-heading"><div><p>REVIEW DETAILS</p><h2 id="review-dialog-title">{{entry.productName}}</h2></div><button type="button" class="close" aria-label="Close review" (click)="close()" [disabled]="!!busy()">×</button></header>
+<div class="dialog-content"><div class="review-head"><div><strong>{{r.displayName}}</strong><p>{{r.createdAt|date:'mediumDate'}} @if(r.verifiedPurchase){ · Verified purchase}</p></div><span class="stars" [attr.aria-label]="r.rating+' out of 5 stars'">{{'★'.repeat(r.rating)}}{{'☆'.repeat(5-r.rating)}}</span></div>
+@if(r.title){<h3>{{r.title}}</h3>}<p class="body">{{r.body}}</p>
+<div class="media">@for(m of r.media;track m.url){@if(m.type==='photo'){<a [href]="m.url" target="_blank" rel="noopener"><img [src]="m.url" alt="Customer review photo" loading="lazy"></a>}@else{<video [src]="m.url" controls playsinline preload="metadata"></video>}}</div>
+@if(r.productId){<a class="product-link" [routerLink]="['/products',r.productId]">View product →</a>}
+<div class="moderation"><label for="moderation-note">Moderation note <small>Visible to the customer. A reason is required when rejecting or unpublishing.</small></label><textarea id="moderation-note" [ngModel]="notes[r.id]??r.moderationNote??''" (ngModelChange)="notes[r.id]=$event;dialogError.set('')" maxlength="500" rows="3" [disabled]="!!busy()" [class.invalid]="!!dialogError()" [attr.aria-invalid]="!!dialogError()"></textarea>
+@if(dialogError()){<p class="dialog-error" role="alert">{{dialogError()}}</p>}
+</div></div><footer class="actions">@if(status!=='Published'){<button class="primary" (click)="decide(r,'Published')" [disabled]="!!busy()">{{busy()===r.id?'Saving...':'Publish review'}}</button>}@if(status!=='Rejected'){<button (click)="decide(r,'Rejected')" [disabled]="!!busy()">{{status==='Published'?'Unpublish review':'Reject review'}}</button>}</footer>
+</section></div>}
+
+@if(adding()){<div class="review-backdrop" (click)="closeImport()"><section class="review-dialog" role="dialog" aria-modal="true" aria-labelledby="import-title" [ksDialogFocus]="true" (ksDialogDismiss)="closeImport()" (click)="$event.stopPropagation()">
+<header class="dialog-heading"><div><p>PAST CUSTOMER FEEDBACK</p><h2 id="import-title">Add customer review</h2></div><button class="close" aria-label="Close" (click)="closeImport()" [disabled]="importing()">&times;</button></header>
+<form class="dialog-content import-form" (ngSubmit)="saveImport()"><fieldset [disabled]="importing()"><label>Category<select name="category" [(ngModel)]="draft.categoryId" required><option value="">Choose category</option>@for(c of categories();track c.id){<option [value]="c.id">{{c.name}}</option>}</select></label>
+<label>Customer display name<input name="name" [(ngModel)]="draft.displayName" maxlength="80" required placeholder="Customer first name"></label>
+<label>Rating<select name="rating" [(ngModel)]="draft.rating">@for(n of [5,4,3,2,1];track n){<option [ngValue]="n">{{n}} stars</option>}</select></label>
+<label>Customer's review<textarea name="body" [(ngModel)]="draft.body" minlength="10" maxlength="2000" rows="5" required></textarea></label>
+<label>Photos <small>Up to 4 photos, 5 MB each. JPG, PNG or WebP.</small><input type="file" accept="image/jpeg,image/png,image/webp" multiple (change)="choose($event)"></label>
+<div class="import-photos">@for(url of previews;track url;let i=$index){<figure><img [src]="url" alt="Review photo preview"><button type="button" [attr.aria-label]="'Remove photo '+(i+1)" (click)="removePhoto(i)">&times;</button></figure>}</div>
+<label class="consent"><input type="checkbox" name="consent" [(ngModel)]="draft.consent" required> This is genuine customer feedback and I have permission to publish the text, name and photos.</label>
+<p class="guidance">Shown as an imported customer review. It will not receive a verified purchase badge.</p>
+@if(importError()){<p class="dialog-error" role="alert">{{importError()}}</p>}
+<button type="submit" class="primary">{{importing()?'Saving...':'Save for review'}}</button></fieldset></form></section></div>}

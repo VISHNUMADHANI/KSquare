@@ -1,0 +1,4 @@
+.price { display: flex; flex-wrap: wrap; align-items: baseline; gap: .5rem .75rem; }
+.price__current { color: var(--ks-color-gold-light); font: 500 1.25rem/1 var(--ks-font-body); }
+.price__original { color: var(--ks-color-text-subtle); font-size: .875rem; }
+.price__discount { background: var(--ks-color-gold); color: var(--ks-color-canvas); padding: .2rem .45rem; font: 700 .625rem/1.2 var(--ks-font-mono); letter-spacing: .08em; text-transform: uppercase; }

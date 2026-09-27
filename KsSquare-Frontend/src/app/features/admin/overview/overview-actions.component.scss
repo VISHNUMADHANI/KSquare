@@ -1,0 +1,3 @@
+.quick-actions{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-top:1rem}.quick-actions a{display:flex;align-items:center;gap:1rem;border:1px solid #e2ded2;border-radius:10px;padding:.9rem 1rem;text-decoration:none;background:#f0eee7}.quick-actions a>div{flex:1}.quick-actions a:hover{background:#ebe6d9}.action-icon{color:#80611f;font-size:1.5rem}.quick-actions h3{margin:0;font-size:.8rem;font-weight:500}.quick-actions p{margin:.3rem 0 0;color:#586271;font-size:.7rem}.updated-at{margin:.85rem 0 0;color:#687282;font-size:.6rem}
+
+@media(max-width:40rem){.quick-actions{grid-template-columns:1fr;gap:.75rem}}

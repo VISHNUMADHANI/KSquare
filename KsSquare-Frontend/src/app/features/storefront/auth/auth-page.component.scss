@@ -1,0 +1,43 @@
+﻿:host { display:block; }
+.account-entry { min-height:100dvh; padding:32px 24px; display:grid; place-items:center; background:#f5f2ec; color:#302a22; }
+.auth-layout { width:min(100%,1000px); display:grid; grid-template-columns: .9fr 1.1fr; overflow:hidden; border:1px solid #e5dfd4; border-radius:20px; background:#fffdf9; box-shadow:0 16px 60px #392b1410; }
+.account-story { position:relative; display:flex; flex-direction:column; justify-content:space-between; padding:32px; min-height:570px; background:linear-gradient(180deg,#14120f25 20%,#14120fe8 78%),url('/assets/editorial/jewellery-atelier-black.png') 60% center/cover; color:#fff9ed; }
+.story-brand { align-self:flex-start; display:block; position:relative; width:112px; height:96px; overflow:hidden; }
+.story-brand img { position:absolute; width:188px; height:188px; max-width:none; left:50%; top:50%; transform:translate(-50%,-50%); }
+.story-copy { padding-top:120px; }
+.story-eyebrow { font-size:10px; letter-spacing:.18em; text-transform:uppercase; color:#e8cd92; }
+.account-story h2 { font:400 36px/1.2 var(--ks-font-display); letter-spacing:-.025em; margin:16px 0; }
+.account-story h2 em { color:#ebd3a0; font-weight:400; }
+.account-story p { max-width:310px; font-size:13px; line-height:1.8; color:#e2dcd0; margin:0 0 24px; }
+.story-detail { display:flex; align-items:center; gap:10px; border-top:1px solid #ffffff30; padding-top:18px; font-size:11px; color:#e2dcd0; }
+.story-detail span { font-size:22px; color:#e8cd92; }
+.account-panel { min-width:0; width:100%; align-self:center; padding:38px 44px; }
+.auth-brand { display:none; }
+.account-panel > .ks-eyebrow { font-size:10px; letter-spacing:.16em; margin:0 0 12px; color:#86652f; }
+h1 { font:400 36px/1.2 var(--ks-font-display); letter-spacing:-.035em; margin:0 0 10px; color:#302a22; }
+.account-panel > p:not(.ks-eyebrow) { color:#756d62; font-size:13px; line-height:1.65; margin:0 0 26px; }
+form { display:grid; gap:17px; }
+.ks-field { min-width:0; gap:7px; }
+.ks-label { font-size:12px; font-weight:500; letter-spacing:0; text-transform:none; color:#40392f; }
+.ks-input { min-height:46px; border:1px solid #dcd5c9; border-radius:7px; background:#fff; color:#302a22; padding:11px 12px; font:400 16px/1.4 var(--ks-font-body); box-shadow:none; }
+.ks-input::placeholder { color:#9a9389; font-size:13px; }
+.ks-input:focus { outline:3px solid #b18c4320; outline-offset:1px; border-color:#9a793d; box-shadow:none; }
+.password-label { display:flex; align-items:center; justify-content:space-between; gap:8px; }
+a,footer button { color:#80602c; text-decoration:none; }
+a:hover { text-decoration:underline; text-underline-offset:4px; }
+.password-label a { font-size:11px; }
+.account-panel form button { width:100%; min-height:46px; margin-top:5px; border-radius:7px; background:#332b20; color:#fff5de; font-size:13px; text-transform:none; letter-spacing:0; }
+.account-panel form button:hover:not(:disabled) { background:#665031; }
+footer { border-top:1px solid #e8e1d6; padding-top:20px; margin-top:23px; text-align:center; display:grid; gap:12px; color:#756d62; font-size:12px; }
+footer a { font-weight:600; margin-left:4px; }
+footer button { border:0; background:none; cursor:pointer; min-height:32px; }
+.back-to-store { display:flex; align-items:center; justify-content:center; min-height:36px; margin-top:12px; font-size:11px; color:#756d62; }
+.registration-form { grid-template-columns:1fr 1fr; gap:16px 14px; }
+.registration-form .email-field,.registration-form .password-hint,.registration-form > button { grid-column:1/-1; }
+.password-hint { color:#756d62; font-size:11px; line-height:1.65; }
+.auth-alert { margin:0 0 18px; padding:12px 14px; border:1px solid #b2cbb7; border-radius:7px; background:#edf4ed; color:#286145; font-size:12px; line-height:1.6; }
+.auth-alert--error { border-color:#deb7b6; background:#fbefed; color:#a52d32; }
+.otp-input { letter-spacing:.3em; }
+@media(max-width:800px) { .account-entry { padding:24px 16px; } .auth-layout { max-width:480px; grid-template-columns:1fr; } .account-story { display:none; } .account-panel { padding:28px; } .auth-brand { display:flex; width:max-content; margin:0 auto 24px; padding:0 12px; border-radius:8px; background:#080808; zoom:.62; } h1 { font-size:32px; } }
+@media(max-width:420px) { .account-entry { padding:16px 12px; } .account-panel { padding:26px 22px; } .registration-form { grid-template-columns:1fr; gap:14px; } .auth-layout { border-radius:14px; } }
+

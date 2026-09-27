@@ -1,0 +1,37 @@
+:host .detail-shell { max-width: 76rem; padding-block: 2rem 4.5rem; }
+:host .back { margin-bottom: 1rem; }
+:host .product-layout { grid-template-columns: minmax(0, 31rem) minmax(20rem, 1fr); align-items: start; gap: clamp(2rem, 4vw, 3.75rem); }
+:host .gallery { width: 100%; max-width: 31rem; }
+:host .main-image { width: 100%; max-height: 31rem; aspect-ratio: 1; background: var(--ks-color-surface-raised); }
+:host .main-image img { object-fit: contain; }
+:host .thumbnails { gap: .5rem; margin-top: .55rem; padding-bottom: .2rem; }
+:host .thumbnails button { flex-basis: 3.7rem; }
+:host .information { gap: .8rem; padding-top: .15rem; }
+:host .information h1 { max-width: 15ch; font-size: clamp(2rem, 3.7vw, 3.35rem); line-height: 1.04; }
+:host .description { margin: .1rem 0; padding-block: .85rem; font-size: .82rem; line-height: 1.65; }
+:host .information fieldset { padding: .15rem 0 .85rem; }
+:host .information legend { margin-bottom: .5rem; font-size:.75rem; letter-spacing: .04em; }
+:host .choices { gap: .4rem; }
+:host .choices button { min-width: 2.75rem; min-height: 2.6rem; justify-content: center; padding: .45rem .65rem; font-size: .78rem; transition: border-color .18s ease, color .18s ease, background .18s ease; }
+:host .choices button:hover:not(:disabled) { border-color: rgb(216 176 96 / 55%); background: rgb(216 176 96 / 5%); }
+.starting-label { margin-bottom: -.55rem; color: var(--ks-color-text-subtle); font: .75rem var(--ks-font-mono); letter-spacing: .1em; text-transform: uppercase; }
+.choices button:disabled { border-color: var(--ks-color-border); color: var(--ks-color-text-subtle); cursor: not-allowed; text-decoration: line-through; }
+.choices button.selected:disabled { border-color: var(--ks-color-gold); color: var(--ks-color-gold-light); text-decoration: none; }
+:host .related { margin-top: 4rem; }
+:host .related > div { grid-template-columns: repeat(auto-fill, minmax(12.5rem, 15rem)); justify-content: start; gap: 1rem; }
+@media (max-width: 55rem) {
+  :host .product-layout { grid-template-columns: 1fr; gap: 1.75rem; }
+  :host .gallery { max-width: 34rem; margin-inline: auto; }
+  :host .main-image { max-height: 34rem; }
+  :host .information { max-width: 40rem; }
+}
+@media (max-width: 32rem) {
+  :host .detail-shell { padding-block: 1.25rem 3rem; }
+  :host .information h1 { font-size: 2rem; }
+  :host .related > div { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+
+:host .detail-shell{padding-block:2.5rem 5rem}:host .product-layout{grid-template-columns:minmax(0,1.1fr) minmax(0,1fr);gap:clamp(2rem,5vw,5rem)}:host .gallery{max-width:none}:host .main-image{max-height:none}:host .information h1{font-weight:400;line-height:1.15}:host .information{gap:1.2rem}:host .description{font-size:.9rem;line-height:1.9}:host .information legend{font-size:.75rem}:host .choices button{min-height:2.9rem}:host .related>div{grid-template-columns:repeat(4,minmax(0,1fr))}.product-assistance{display:grid;gap:.8rem;margin-top:1rem;padding-top:1rem;border-top:1px solid var(--ks-color-border)}.product-assistance p{margin:0;font:1.3rem var(--ks-font-display)}.product-assistance small{color:var(--ks-color-text-muted);font-size:.75rem}.product-assistance a{justify-self:start}@media(max-width:55rem){:host .product-layout{grid-template-columns:1fr}:host .gallery{max-width:36rem}:host .related>div{grid-template-columns:repeat(2,minmax(0,1fr))}}
+
+/* Compact purchase area with longer information in a separate dialog. */
+:host .detail-shell{padding-block:24px 50px}:host .product-layout{gap:32px;align-items:start}:host .information{gap:12px}:host .information h1{font-size:clamp(23px,2.1vw,30px);line-height:1.2;max-width:none}:host .information .category{font-size:10px}:host .product-review-link{font-size:12px;margin:0 0 2px}:host .tags span{font-size:11px;padding:4px 7px}:host .tags:empty{display:none}:host .information fieldset{padding-bottom:10px}:host .choices button{min-height:36px;font-size:12px;padding:7px 11px}:host .information legend{font-size:12px;margin-bottom:7px}:host .personalization{gap:8px;padding:0}:host .personalization h2{font-size:14px}:host .personalization span,:host .personalization small{font-size:11px}:host .personalization input{font-size:14px;padding:10px}:host .product-note{margin:4px 0;padding:11px;font-size:12px}:host .demo-purchase{margin:0}:host .demo-purchase p{font-size:11px;margin:8px 0}:host .add-cart-button{min-height:44px;padding:11px;font-size:13px}:host .product-assistance{margin-top:0;padding-top:10px;font-size:12px;gap:6px}.product-info-links{display:flex;border-top:1px solid #e4dacc;border-bottom:1px solid #e4dacc}.product-info-links button{display:flex;justify-content:space-between;gap:12px;flex:1;background:transparent;border:0;padding:13px 8px;font:inherit;font-size:12px;text-align:left;cursor:pointer}.product-info-links button+button{border-left:1px solid #e4dacc}.product-info-links button:hover{background:#f6f1e7}.product-info-links button:focus-visible{outline:2px solid #a88442;outline-offset:-2px}.product-info-backdrop{position:fixed;inset:0;background:#0009;backdrop-filter:blur(3px);z-index:110}.product-info-dialog{position:fixed;inset:50% auto auto 50%;transform:translate(-50%,-50%);z-index:111;width:min(660px,calc(100vw - 28px));max-height:85dvh;display:flex;flex-direction:column;background:#fffdf8;border:1px solid #e4dacc;border-radius:16px;box-shadow:0 20px 80px #0004;overflow:hidden}.product-info-dialog>header{display:flex;align-items:center;justify-content:space-between;padding:18px 22px;border-bottom:1px solid #e4dacc}.product-info-dialog h2{margin:0;font-size:23px}.product-info-dialog>header button{border:0;background:transparent;font-size:26px;cursor:pointer;width:40px;height:40px}.product-info-body{padding:22px;overflow:auto;overscroll-behavior:contain}.product-info-body h3{font-size:16px;margin:0 0 14px}.product-info-body p{font-size:13px;line-height:1.75;overflow-wrap:anywhere}.full-description{white-space:pre-wrap;margin:0}@media(min-width:881px){:host .gallery{position:sticky;top:20px}}@media(max-width:880px){:host .product-layout{grid-template-columns:1fr;gap:22px}:host .information h1{font-size:24px}:host .gallery{position:static;width:100%}.product-info-body{padding:18px}}

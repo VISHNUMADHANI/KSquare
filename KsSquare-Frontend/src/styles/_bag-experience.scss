@@ -1,0 +1,27 @@
+body .storefront-shell.storefront-shell.storefront-shell {
+ .cart-page,.checkout-page{max-width:1120px;padding-block:1.75rem 3.5rem}
+ .cart-page header,.checkout-page .page-heading{margin:0 0 1.4rem}.checkout-page .page-heading{margin-top:1.2rem}
+ .cart-page h1,.checkout-page h1{font:500 clamp(1.7rem,3vw,2.3rem)/1.2 var(--ks-font-display);margin:.4rem 0 .6rem}
+ .cart-page header p,.checkout-page .page-heading p{font-size:.82rem}
+ .cart-layout{grid-template-columns:minmax(0,1.5fr) minmax(280px,1fr);gap:1.5rem;align-items:start}
+ .cart-item{display:grid;grid-template-columns:100px minmax(0,1fr) auto;gap:1.1rem;padding:1.15rem;align-items:start}
+ .bag-photo{width:100px;height:115px;border-radius:10px;overflow:hidden;display:block}
+ .item-info>a{font-size:1rem}.item-info p{font-size:.75rem;margin:.5rem 0;line-height:1.6}.item-info>span{font-size:.75rem}.cart-item>strong{font-size:.9rem}
+ .cart-page aside{padding:1.4rem}.cart-page aside h2{font-size:1.45rem}.cart-page aside p,.cart-page aside small{font-size:.77rem;line-height:1.65}.cart-page .quantity{margin-top:.8rem}
+ .checkout-page .demo-notice{padding:.65rem 1rem;margin:0 0 1.1rem;border-radius:9px}.checkout-page .demo-notice p{font-size:.73rem}.checkout-page .demo-notice>span{font-size:1.2rem}
+ .checkout-page .policy-link{font-size:.72rem;line-height:1.65;margin:.5rem 0 .9rem}
+ .checkout-steps{display:flex;gap:1.5rem;list-style:none;padding:0 0 1rem;margin:0 0 1.25rem;border-bottom:1px solid #e4ddcf;font-size:.72rem;color:#756c60}.checkout-steps [aria-current]{color:#392e20;font-weight:600}
+ .checkout-grid{display:grid;grid-template-columns:minmax(0,1.2fr) minmax(0,1fr);gap:1.5rem;align-items:start}
+ .checkout-grid .payment-card{grid-column:1;grid-row:1}.checkout-grid .summary-card{grid-column:2;grid-row:1;background:#f0ebe2}
+ .checkout-grid .payment-card,.checkout-grid .summary-card{padding:1.5rem;border:1px solid #e4ddcf;border-radius:16px}
+ .checkout-grid h2{font:500 1.5rem var(--ks-font-display);margin:.5rem 0 1rem}.checkout-grid p{font-size:.8rem}
+ .checkout-page .summary-card ul{padding:0;margin:0}.checkout-page .summary-card li{display:grid;grid-template-columns:64px minmax(0,1fr);gap:.8rem;padding:1rem 0}
+ .checkout-photo{width:64px;height:76px;border-radius:8px;overflow:hidden}.checkout-line-info{min-width:0;font-size:.8rem}.checkout-line-info p{font-size:.7rem;overflow-wrap:anywhere}.checkout-line-info>span{font-size:.72rem}.checkout-line-info .line-total{float:right;font-size:.8rem}
+ .checkout-page .total{margin-top:1rem;padding-top:1rem}.checkout-page .total>strong{font-size:1.65rem}.checkout-page .fine-print{font-size:.71rem;line-height:1.65}
+ .checkout-page textarea{min-height:115px;font-size:.82rem}.checkout-page .provider{margin-top:1.2rem;padding-top:1rem}.checkout-page .payment-button{width:100%;min-height:46px;font-size:.8rem}
+ .bag-confirm-backdrop{position:fixed;inset:0;z-index:1500;background:rgb(25 22 18 / 45%);backdrop-filter:blur(3px)}
+ .bag-confirm{position:fixed;z-index:1501;top:50%;left:50%;transform:translate(-50%,-50%);width:min(420px,calc(100vw - 32px));max-height:calc(100dvh - 32px);overflow:auto;box-sizing:border-box;padding:1.6rem;background:#fffdf9;border:1px solid #e4ddcf;border-radius:18px;box-shadow:0 24px 80px #0003;display:grid;gap:.8rem}
+ .bag-confirm h2{font:500 1.65rem/1.25 var(--ks-font-display);margin:0}.bag-confirm .ks-eyebrow{margin:0}.bag-confirm-close{position:absolute;right:10px;top:8px;border:0;background:transparent;font-size:1.6rem;width:36px;height:36px;cursor:pointer;color:#392e20}
+ .bag-confirm-item{display:flex;gap:1rem;align-items:center;padding:1rem 0;border-block:1px solid #e4ddcf;margin:.3rem 0}.bag-confirm-photo{width:76px;height:86px;flex-shrink:0;border-radius:9px;overflow:hidden}.bag-confirm-item strong{font-size:.95rem;overflow-wrap:anywhere}.bag-confirm-item p{font-size:.75rem;margin:.35rem 0;color:#756c60}.bag-confirm-item span{font-size:.85rem}.bag-confirm .ks-button{width:100%;font-size:.8rem}
+ @media(max-width:760px){.cart-layout,.checkout-grid{grid-template-columns:1fr}.checkout-grid .payment-card,.checkout-grid .summary-card{grid-column:auto;grid-row:auto}.checkout-grid .payment-card{order:-1}.checkout-steps{gap:.7rem;font-size:.62rem}.cart-item{grid-template-columns:76px minmax(0,1fr);gap:.8rem}.bag-photo{width:76px;height:90px}.cart-item>strong{grid-column:2}.checkout-page .page-heading{gap:.5rem}.checkout-grid .payment-card,.checkout-grid .summary-card{padding:1.1rem}}
+}

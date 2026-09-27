@@ -1,0 +1,102 @@
+<section class="ks-container profile-page">
+  <section class="account-hero">
+    <div class="account-identity">
+      <div class="avatar" aria-hidden="true">{{ customerInitial }}</div>
+      <div>
+        <p class="ks-eyebrow">Customer account</p>
+        <h1>{{ auth.user()?.fullName || 'My profile' }}</h1>
+        <p class="account-email">{{ auth.user()?.email }}</p>
+      </div>
+    </div>
+    <div class="account-actions">
+      <a ksButton routerLink="/orders">My orders</a>
+      <a ksButton routerLink="/custom/requests" class="custom-requests-button">View my custom requests</a>
+      <button ksButton variant="outline" type="button" class="change-password-button" (click)="openPasswordDialog()">Change password</button>
+    <button type="button" class="signout-button" (click)="logout()">
+      <span>Sign out</span><span aria-hidden="true">↗</span>
+    </button>
+    </div>
+  </section>
+
+  @if (error() && !passwordDialogOpen()) {
+    <div class="notice notice--error" role="alert">{{ error() }}</div>
+  }
+  @if (message()) {
+    <div class="notice" role="status">{{ message() }}</div>
+  }
+
+  <div class="profile-layout">
+    <section class="profile-card details-card">
+      <header class="card-heading">
+        <div>
+          <p class="ks-eyebrow">Account details</p>
+          <h2>Personal information</h2>
+        </div>
+        <span class="verified-badge"><span aria-hidden="true">✓</span> Verified</span>
+      </header>
+
+      <form [formGroup]="profileForm" (ngSubmit)="saveProfile()">
+        <label class="ks-field email-field">
+          <span class="ks-label">Email address</span>
+          <input class="ks-input" [value]="auth.user()?.email" disabled />
+          <small>Your verified email is used to access your account.</small>
+        </label>
+        <label class="ks-field">
+          <span class="ks-label">Full name</span>
+          <input class="ks-input" autocomplete="name" formControlName="fullName" />
+        </label>
+        <label class="ks-field">
+          <span class="ks-label">Phone number</span>
+          <input class="ks-input" type="tel" autocomplete="tel" formControlName="phone" />
+        </label>
+        <footer class="form-actions">
+          <span>Keep your contact information up to date.</span>
+          <button ksButton type="submit" [disabled]="saving() || profileForm.pristine">
+            {{ saving() ? 'Saving...' : 'Save changes' }}
+          </button>
+        </footer>
+      </form>
+    </section>
+
+  </div>
+</section>
+
+@if (passwordDialogOpen()) {
+  <button class="dialog-backdrop" type="button" aria-label="Close password dialog" (click)="closePasswordDialog()"></button>
+  <section class="password-dialog" [ksDialogFocus]="true" (ksDialogDismiss)="closePasswordDialog()" role="dialog" aria-modal="true" aria-labelledby="password-dialog-title">
+    <header>
+      <div>
+        <p class="ks-eyebrow">Account security</p>
+        <h2 id="password-dialog-title">Change password</h2>
+        <p>Choose a new password you don’t use elsewhere.</p>
+      </div>
+      <button class="dialog-close" type="button" aria-label="Close" (click)="closePasswordDialog()">×</button>
+    </header>
+
+    @if (error()) {
+      <div class="notice notice--error" role="alert">{{ error() }}</div>
+    }
+
+    <form [formGroup]="passwordForm" (ngSubmit)="changePassword()">
+      <label class="ks-field">
+        <span class="ks-label">Current password</span>
+        <input class="ks-input" type="password" autocomplete="current-password" formControlName="currentPassword" />
+      </label>
+      <label class="ks-field">
+        <span class="ks-label">New password</span>
+        <input class="ks-input" type="password" autocomplete="new-password" formControlName="newPassword" />
+        <small>10–128 characters with uppercase, lowercase and a number.</small>
+      </label>
+      <label class="ks-field">
+        <span class="ks-label">Confirm new password</span>
+        <input class="ks-input" type="password" autocomplete="new-password" formControlName="confirmPassword" />
+      </label>
+      <footer>
+        <button ksButton variant="ghost" type="button" (click)="closePasswordDialog()">Cancel</button>
+        <button ksButton type="submit" [disabled]="passwordSaving()">
+          {{ passwordSaving() ? 'Changing...' : 'Update password' }}
+        </button>
+      </footer>
+    </form>
+  </section>
+}

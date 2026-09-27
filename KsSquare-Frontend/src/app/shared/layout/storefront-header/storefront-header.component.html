@@ -1,0 +1,15 @@
+<a class="skip-link" href="#main-content">Skip to content</a>
+<div class="announcement"><ks-etsy-trust /><a routerLink="/custom">Create a custom order <span aria-hidden="true">→</span></a></div>
+<header class="header">
+  <div class="ks-container header__inner">
+    <a routerLink="/" class="header__brand" aria-label="K Square home"><ks-brand-logo presentation="storefront" /></a>
+    <nav class="desktop-nav" aria-label="Primary navigation"><ul>@for (item of navigation; track item.label) { <li><a class="nav-label" [class.nav-custom]="item.path === '/custom'" [routerLink]="item.path" routerLinkActive="nav-label--active" [routerLinkActiveOptions]="{ exact: true }" ariaCurrentWhenActive="page">{{ item.label }}</a></li> }</ul></nav>
+    <div class="header__actions"><a class="icon-link cart-link" routerLink="/cart" [attr.aria-label]="'Shopping bag, '+cart.count()+' items'"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 7h14l1 14H4L5 7z M9 7V5a3 3 0 0 1 6 0v2"/></svg><span class="cart-count">{{cart.count()}}</span></a><a class="icon-link" routerLink="/" fragment="collection" aria-label="Search jewellery"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m16 16 5 5"/></svg></a><a class="account-link" [routerLink]="accountPath()"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="3.5"/><path d="M5 21v-3a7 7 0 0 1 14 0v3"/></svg><span>{{accountLabel()}}</span></a><button #menuToggle class="menu-toggle" type="button" (click)="toggleMenu()" [attr.aria-expanded]="menuOpen()" aria-controls="mobile-navigation" aria-label="Open navigation menu"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 7h18M3 12h18M3 17h18"/></svg></button></div>
+  </div>
+</header>
+@if (menuOpen()) { <button class="menu-backdrop" type="button" aria-label="Close navigation menu" (click)="closeMenu()"></button> }
+<aside #mobileNav id="mobile-navigation" class="mobile-nav" [class.mobile-nav--open]="menuOpen()" [attr.inert]="menuOpen() ? null : ''" [attr.aria-hidden]="!menuOpen()" role="dialog" aria-label="Navigation" [attr.aria-modal]="menuOpen() ? true : null" (keydown)="trapFocus($event)">
+  <div class="mobile-nav__header"><a routerLink="/" (click)="closeMenu()" aria-label="K Square home"><ks-brand-logo presentation="storefront" /></a><button #menuClose type="button" class="mobile-nav__close" (click)="closeMenu()" aria-label="Close navigation menu">×</button></div>
+  <p class="mobile-nav__eyebrow">Find your next favourite</p><nav aria-label="Mobile navigation"><ul>@for (item of navigation; track item.label; let index = $index) { <li><a [routerLink]="item.path" [class.mobile-custom]="item.path === '/custom'" (click)="closeMenu()" routerLinkActive="mobile-nav__accent" [routerLinkActiveOptions]="{ exact: true }" ariaCurrentWhenActive="page"><span>{{ item.label }}</span><span class="mobile-nav__arrow" aria-hidden="true">&#8250;</span></a></li> }</ul></nav>
+  <div class="mobile-nav__footer"><a class="mobile-account" [routerLink]="accountPath()" (click)="closeMenu()">{{accountLabel()}} <span aria-hidden="true">&rarr;</span></a><p>Distinctive pieces. A personal story.</p></div>
+</aside>

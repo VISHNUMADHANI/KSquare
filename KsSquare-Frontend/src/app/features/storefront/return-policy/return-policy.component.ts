@@ -1,0 +1,1 @@
+import { Component, Input } from '@angular/core';import { RouterLink } from '@angular/router';@Component({selector:'app-return-policy',standalone:true,imports:[RouterLink],templateUrl:'./return-policy.component.html',styleUrl:'./return-policy.component.scss'})export class ReturnPolicyComponent { @Input() embedded = false; }

@@ -1,0 +1,27 @@
+# Only project source directories belong in this repository.
+/*
+!/KsSquare-Backend/
+!/KsSquare-Frontend/
+!/.gitignore
+!/README.md
+# Secrets and local configuration
+**/.env
+**/.env.*
+!**/.env.example
+**/appsettings.Local.json
+**/*.pem
+**/*.pfx
+**/*.key
+# Dependencies, build output and machine state
+**/node_modules/
+**/bin/
+**/obj/
+**/dist/
+**/.angular/
+**/.vs/
+**/.vscode/
+**/*.log
+**/*.tsbuildinfo
+**/Thumbs.db
+KsSquare-Backend/.product-cleanup/
+KsSquare-Backend/CustomerOrdersRepair/

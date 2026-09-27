@@ -1,0 +1,10 @@
+.dialog-backdrop { position: fixed; inset: 0; z-index: 89; border: 0; background: #13110e80; backdrop-filter: blur(4px); }
+.password-dialog { position: fixed; z-index: 90; top: 50%; left: 50%; width: min(calc(100vw - 2rem), 31rem); max-height: calc(100dvh - 2rem); translate: -50% -50%; overflow-y: auto; border: 1px solid var(--ks-color-border); background: var(--ks-color-canvas); box-shadow: 0 2rem 6rem #24211a40; padding: 2rem; }
+.password-dialog > header { display: flex; align-items: flex-start; justify-content: space-between; gap: 1rem; margin-bottom: 1.5rem; }
+.password-dialog h2 { margin: .5rem 0; font: 1.8rem var(--ks-font-display); }
+.password-dialog header p:last-child { color: var(--ks-color-text-muted); font-size: .8rem; }
+.dialog-close { min-width: 2.75rem; min-height: 2.75rem; border: 0; background: transparent; color: inherit; cursor: pointer; font-size: 1.7rem; }
+.password-dialog form { display: grid; gap: 1.1rem; }
+.password-dialog form footer { display: flex; justify-content: flex-end; gap: .5rem; margin-top: .5rem; border-top: 1px solid var(--ks-color-border); padding-top: 1rem; }
+@media(max-width:55rem) { .profile-layout { grid-template-columns: 1fr; } .profile-card { padding: 1rem; } }
+@media(max-width:34rem) { .account-hero { align-items: start; flex-direction: column; } .details-card form { grid-template-columns: 1fr; } .form-actions { align-items: stretch; flex-direction: column; } .card-heading { flex-wrap: wrap; } .password-dialog { padding: 1.25rem; } }

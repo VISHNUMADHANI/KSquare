@@ -1,0 +1,23 @@
+<header class="page-heading"><div><p class="ks-eyebrow">Catalog management</p><h1 class="ks-heading">Products</h1><p>Curate your collection, refine the details and keep every piece up to date.</p></div><button ksButton type="button" (click)="addProduct()"><span aria-hidden="true">+</span> Add product</button></header>
+@if (error()) { <div class="error-banner" role="alert">{{ error() }}</div> }
+@if (!loading() && products().length) { <section class="ks-card filters" aria-label="Product filters">
+  <label class="filter-search"><span>Search</span><input class="ks-input" type="search" placeholder="Product name or description" [value]="search()" (input)="search.set($any($event.target).value)" /></label>
+  <ks-multi-select-filter label="Category" placeholder="All Categories" [options]="categoryChoices()" [selected]="categoryFilters()" (selectedChange)="selectCategories($event)" />
+  <ks-multi-select-filter label="Subcategory" placeholder="All Subcategories" [options]="subcategoryChoices()" [selected]="subcategoryFilters()" (selectedChange)="subcategoryFilters.set($event)" />
+  <ks-multi-select-filter label="Size / Color" placeholder="All Sizes &amp; Colors" [options]="optionChoices()" [selected]="optionFilters()" (selectedChange)="optionFilters.set($event)" />
+  <ks-multi-select-filter label="Availability" placeholder="All Availability" [options]="availabilityChoices" [selected]="availabilityFilters()" (selectedChange)="availabilityFilters.set($event)" />
+  <ks-multi-select-filter label="Status" placeholder="All Statuses" [options]="statusChoices" [selected]="statusFilters()" (selectedChange)="statusFilters.set($event)" />
+  <button type="button" class="clear-filters" (click)="clearFilters()">Clear filters</button><strong>{{ filteredProducts().length }} products</strong>
+</section> }
+@if (loading()) { <section class="ks-card product-panel"><ks-state-panel title="Loading products" message="Retrieving the product catalog..." /></section> }
+@else if (error() && !products().length) { <section class="ks-card product-panel"><ks-state-panel title="Catalog unavailable" message="We could not retrieve your products. Please try again."><button ksButton type="button" (click)="load()">Try again</button></ks-state-panel></section> }
+@else if (!products().length) { <section class="ks-card product-panel"><ks-state-panel title="No products yet" message="Add your first jewellery product to begin building the catalog."><button ksButton type="button" (click)="addProduct()">Add product</button></ks-state-panel></section> }
+@else if (!filteredProducts().length) { <section class="ks-card product-panel"><ks-state-panel title="No matching products" message="Change or clear the filters to see products." /><div class="empty-actions"><button type="button" class="clear-filters" (click)="clearFilters()">Clear filters</button></div></section> }
+@else { <section class="product-grid" aria-label="Products">@for (product of filteredProducts(); track product.id) { <article class="product-card">
+  <button class="product-tile" type="button" (click)="editProduct(product)" [attr.aria-label]="'Edit '+product.name+', '+(product.isAvailable?'available':'unavailable')+', '+(product.isActive?'active':'draft')" [title]="product.name">
+    <span class="product-image">@if (product.media[0]; as image) { <img [src]="image.url" [alt]="image.altText || product.name" loading="lazy" /> } @else { <span class="image-empty"><span aria-hidden="true">◇</span><small>No photo</small></span> }</span>
+    <span class="card-badges"><ks-status-badge [tone]="product.isAvailable ? 'success' : 'warning'">{{ product.isAvailable ? 'Available' : 'Unavailable' }}</ks-status-badge><ks-status-badge [tone]="product.isActive ? 'gold' : 'neutral'">{{ product.isActive ? 'Active' : 'Draft' }}</ks-status-badge></span>
+  </button>
+  <button class="delete-card" type="button" [attr.aria-label]="'Delete ' + product.name" title="Delete product" (click)="remove($event, product)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><path d="M4 7h16M9 7V4h6v3M6 7l1 13h10l1-13M10 10v7m4-7v7"/></svg></button>
+</article> }</section> }
+@if (editorOpen()) { <div class="dialog-backdrop"></div><section [ksDialogFocus]="true" (ksDialogDismiss)="dismissEditor()" class="product-editor-dialog" role="dialog" aria-modal="true" [attr.aria-label]="editingId() ? 'Edit product' : 'Add product'"><app-product-form [dialogMode]="true" [dialogProductId]="editingId()" (cancelled)="closeEditor()" (completed)="saved()" /></section> }

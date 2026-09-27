@@ -1,0 +1,27 @@
+<ks-collection-hero />
+<section ksSectionReveal class="ks-container collection-showcase" aria-labelledby="collections-title">
+ <header class="collection-showcase__heading"><p class="ks-eyebrow">FIND YOUR SIGNATURE</p><h2 id="collections-title">Shop by collection</h2></header>
+ <nav class="collection-lane" aria-label="Jewelry collections">@for(collection of collections;track collection.path){
+  <a class="collection-tile" [class.collection-tile--raised]="collection.image === 'watch-detail' || collection.image === 'moissanite-ring'" [routerLink]="collection.path" [attr.aria-label]="'Explore '+(collection.image==='watch-detail'?'watches':collection.name)">
+   <img [src]="collection.image==='watch-detail'?'assets/collections/watches-mobile.webp':'assets/collections/'+collection.image+'.jpg'" alt="" width="400" height="500" loading="lazy">
+   <span class="collection-tile__label">{{collection.image==='watch-detail'?'Watches':collection.name}}<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M5 12h14m-5-5 5 5-5 5"/></svg></span>
+  </a>
+ }</nav>
+ <p class="collection-swipe-hint">Swipe to explore <span aria-hidden="true">→</span></p>
+</section>
+<section ksSectionReveal id="collection" class="arrivals product-first" aria-labelledby="arrivals-title"><div class="ks-container">
+  <div class="section-heading"><div><p class="ks-eyebrow">THE LATEST DROP</p><h2 id="arrivals-title">Find your next signature.</h2><p class="shop-intro">Discover your next signature piece. Chains, watches, pendants and more.</p></div><a class="text-link" routerLink="/custom">Make it personal <span aria-hidden="true">↗</span></a></div>
+  <form class="home-search" (submit)="$event.preventDefault();searchProducts(searchInput.value)"><label class="sr-only" for="home-search">Search jewelry</label><input #searchInput id="home-search" type="search" placeholder="Find a piece you love" [value]="search()"><button type="submit">Search <span aria-hidden="true">→</span></button></form><nav class="home-category-nav" aria-label="Shop by category">@for(collection of collections;track collection.path){<a [routerLink]="collection.path">{{collection.name}} <span aria-hidden="true">↗</span></a>}</nav>
+  @if (loading()) { <div class="home-product-grid" aria-label="Loading the latest jewelry" aria-busy="true">@for (item of [1,2,3,4]; track item) { <div class="product-skeleton"></div> }</div> }
+  @else if (error()) { <div class="collection-state" role="status"><h3>A little pause in the collection.</h3><p>We couldn't load the latest pieces. Please try again in a moment.</p><button ksButton variant="outline" type="button" (click)="loadProducts()">Try again</button></div> }
+  @else if (products().length) { <div class="home-product-grid">@for (product of products(); track product.id) { <ks-product-card [product]="product" /> }</div> }
+  @else { <div class="collection-state"><h3>{{search()?'No pieces found.':'Your next favorite is worth the wait.'}}</h3><p>{{search()?'Try another name or explore the collections above.':'New pieces will appear here as they join the collection.'}}</p><a ksButton variant="outline" routerLink="/custom">Discover custom jewelry</a></div> }
+@if(moreError()){<p class="more-error" role="status">We could not load more pieces. Please try again.</p>}
+@if(hasMore() && !loading()){<div class="load-more"><button ksButton variant="outline" type="button" [disabled]="loadingMore()" (click)="loadMore()">{{loadingMore()?'Loading…':'Discover more pieces'}}</button></div>}
+</div></section>
+
+
+
+
+<section ksSectionReveal class="editorial-pair ks-container" aria-label="Discover your style"><a routerLink="/custom" class="editorial-card"><img src="assets/collections/custom-pendant.jpg" alt="Personalized iced-out letter pendant" width="600" height="600" loading="lazy"><div><p>MADE AROUND YOU</p><h2>One name.<br>Endless possibilities.</h2><span>Create a custom piece ↗</span></div></a><a routerLink="/chains" class="editorial-card"><img src="assets/collections/cuban-chain.jpg" alt="Iced-out Cuban link chain" width="600" height="800" loading="lazy"><div><p>THE FINISHING TOUCH</p><h2>Let your<br>style speak.</h2><span>Explore chains ↗</span></div></a></section><section ksSectionReveal class="custom-invitation ks-container"><div><p class="ks-eyebrow">ONE OF A KIND. JUST LIKE YOU.</p><h2>Have something in mind?</h2><p>Share a sketch, a photo, or simply an idea. Let's create your next signature piece.</p></div><a ksButton routerLink="/custom">Start a custom order ↗</a></section>
+<ks-etsy-reviews />

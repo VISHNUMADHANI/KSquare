@@ -1,0 +1,11 @@
+ks-order-returns {
+.contact-customer{margin:1rem 0;padding:1rem;background:#f6f7f9;border-radius:10px;font-size:.8rem}.contact-customer p{line-height:1.6;color:#626b78}.contact-customer a{display:inline-flex;padding:.65rem .9rem;border:1px solid #c8b47b;border-radius:8px;color:#72561d;text-decoration:none}
+
+.files li{display:flex;align-items:center;justify-content:space-between;gap:.75rem}.files li span{overflow-wrap:anywhere;min-width:0}.files li button{flex-shrink:0}
+
+
+.upload-previews{display:flex;flex-wrap:wrap;gap:10px;padding:0;list-style:none}.upload-previews li{display:flex;flex-direction:column;align-items:stretch;gap:4px;width:88px;min-width:0}.preview-image{position:relative;width:88px;height:88px}.upload-previews img{display:block;width:100%;height:100%;object-fit:contain;background:#f5f6f8;border:1px solid #e0e4eb;border-radius:8px}.upload-previews .preview-name{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:10px}.upload-previews .preview-remove{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);display:grid;place-items:center;width:36px;min-height:36px;height:36px;padding:0;border:1px solid #fff;border-radius:50%;background:#20242be6;color:#fff;opacity:0;transition:opacity .15s;cursor:pointer}.upload-previews .preview-remove span{font-size:21px;line-height:1}.preview-image:hover .preview-remove,.preview-image:focus-within .preview-remove{opacity:1}.preview-remove:focus-visible{outline:2px solid #987522;outline-offset:2px}@media(hover:none),(pointer:coarse){.upload-previews .preview-remove{opacity:1;width:32px;height:32px;min-height:32px}}
+
+.preview-image{overflow:hidden;border-radius:8px}.upload-previews img{transition:filter .18s}.preview-image:hover img,.preview-image:focus-within img{filter:blur(2px) brightness(.7)}.preview-remove svg{width:19px;height:19px}.upload-previews .preview-remove:hover{background:#9b2636}.upload-previews .preview-remove:disabled{cursor:wait}@media(prefers-reduced-motion:reduce){.upload-previews img,.upload-previews .preview-remove{transition:none}}
+
+}

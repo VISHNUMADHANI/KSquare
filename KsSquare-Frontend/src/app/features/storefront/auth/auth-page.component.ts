@@ -1,0 +1,21 @@
+import { HttpErrorResponse } from '@angular/common/http';
+import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
+import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
+import { Observable, finalize } from 'rxjs';
+import { AuthService } from '../../../core/auth/auth.service';
+import { BrandLogoComponent, KsButtonDirective } from '../../../shared/ui';
+
+type AuthMode='login'|'register'|'verify'|'forgot'|'reset';
+@Component({selector:'app-auth-page',standalone:true,imports:[ReactiveFormsModule,RouterLink,KsButtonDirective,BrandLogoComponent],templateUrl:'./auth-page.component.html',styleUrl:'./auth-page.component.scss',changeDetection:ChangeDetectionStrategy.OnPush})
+export class AuthPageComponent{
+  private readonly auth=inject(AuthService);private readonly route=inject(ActivatedRoute);private readonly router=inject(Router);
+  protected readonly mode=this.route.snapshot.data['mode'] as AuthMode;protected readonly saving=signal(false);protected readonly error=signal('');protected readonly message=signal('');
+  protected readonly form=new FormGroup({fullName:new FormControl('',{nonNullable:true}),email:new FormControl(this.route.snapshot.queryParamMap.get('email')??'',{nonNullable:true,validators:[Validators.required,Validators.email]}),phone:new FormControl('',{nonNullable:true}),password:new FormControl('',{nonNullable:true}),confirmPassword:new FormControl('',{nonNullable:true}),code:new FormControl('',{nonNullable:true}),newPassword:new FormControl('',{nonNullable:true})});
+  protected submit():void{this.error.set('');this.message.set('');const value=this.form.getRawValue();if(this.form.controls.email.invalid){this.fail('Enter a valid email address.');return;}if(this.mode==='register'){if(!value.fullName.trim()||value.phone.trim().length<7){this.fail('Enter your full name and phone number.');return;}if(!this.validPassword(value.password)||value.password!==value.confirmPassword){this.fail(value.password!==value.confirmPassword?'Passwords do not match.':'Password must contain at least 10 characters, uppercase, lowercase and a number.');return;}this.run(this.auth.register({fullName:value.fullName,email:value.email,phone:value.phone,password:value.password}),()=>this.router.navigate(['/verify-email'],{queryParams:{email:value.email}}));return;}if(this.mode==='login'){if(!value.password){this.fail('Enter your password.');return;}this.run(this.auth.login(value.email,value.password),user=>this.router.navigateByUrl(this.route.snapshot.queryParamMap.get('returnUrl')??(user.role==='Admin'?'/admin/products':'/')));return;}if(this.mode==='verify'){if(!/^\d{6}$/.test(value.code)){this.fail('Enter the 6-digit OTP.');return;}this.run(this.auth.verifyEmail(value.email,value.code),()=>this.router.navigate(['/login'],{queryParams:{email:value.email,verified:'true'}}));return;}if(this.mode==='forgot'){this.run(this.auth.forgotPassword(value.email),()=>this.router.navigate(['/reset-password'],{queryParams:{email:value.email}}));return;}if(!/^\d{6}$/.test(value.code)||!this.validPassword(value.newPassword)||value.newPassword!==value.confirmPassword){this.fail(value.newPassword!==value.confirmPassword?'Passwords do not match.':'Enter a valid 6-digit OTP and secure password.');return;}this.run(this.auth.resetPassword(value.email,value.code,value.newPassword),()=>this.router.navigate(['/login'],{queryParams:{email:value.email,reset:'true'}}));}
+  protected resend():void{const email=this.form.controls.email.value;if(!email)return;this.run(this.auth.resendVerification(email),result=>this.message.set(result.message));}
+  private run<T>(request:Observable<T>,next:(value:T)=>void):void{this.saving.set(true);request.pipe(finalize(()=>this.saving.set(false))).subscribe({next,error:error=>this.error.set(this.apiMessage(error))});}
+  private fail(message:string):void{this.error.set(message);}
+  private validPassword(value:string):boolean{return value.length>=10&&/[A-Z]/.test(value)&&/[a-z]/.test(value)&&/\d/.test(value);}
+  private apiMessage(error:unknown):string{return error instanceof HttpErrorResponse?(error.status===0?'Unable to connect right now. Please try again.':error.error?.error??'The request could not be completed.'):'The request could not be completed.';}
+}

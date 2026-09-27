@@ -1,0 +1,77 @@
+body :is(.storefront-shell, app-auth-page) {
+ color-scheme:light;
+ --ks-color-canvas:#f7f8fa; --ks-color-surface:#fff; --ks-color-surface-raised:#f0f2f5; --ks-color-surface-soft:#eef0f3;
+ --ks-color-border:#e0e3e8; --ks-color-border-strong:#c5cad3;
+ --ks-color-text:#181b22; --ks-color-text-muted:#565e6a; --ks-color-text-subtle:#646d79;
+ --ks-color-gold:#826322; --ks-color-gold-light:#826322; --ks-color-gold-deep:#644b16;
+ --ks-color-danger:#b1303d; --ks-color-success:#23704e;
+ --ks-shadow-card-hover:0 12px 30px #1118270c; --ks-shadow-gold:0 5px 15px #1b202414;
+ color:var(--ks-color-text);font-size:.875rem;
+ .ks-container{width:min(100% - 3rem,80rem)}
+ .ks-eyebrow{font:600 .67rem/1.5 var(--ks-font-body);letter-spacing:.16em}
+ .ks-button{min-height:46px;padding:.85rem 1.25rem;border-radius:7px;font-size:.8rem;letter-spacing:.01em;text-transform:none}
+ .ks-button--gold{background:#e3c475;border-color:#e3c475;color:#191b20}
+ .ks-button--gold:not(:disabled):hover{background:#edcf83;border-color:#edcf83;box-shadow:0 5px 15px #12172214}
+ .ks-button--outline{background:transparent;border-color:#c5cad3;color:#242832}
+ .ks-button--outline:not(:disabled):hover{background:#20242c;border-color:#20242c;color:#fff}
+ .ks-button--ghost{color:#505968}
+ .ks-label{font-size:.75rem;letter-spacing:.025em;text-transform:none;font-weight:600}
+ .ks-input,.ks-select,.ks-textarea{font-size:.9rem;background:#fff;border-radius:7px;min-height:46px;border-color:#c5cad3;padding:.8rem .9rem}
+ .ks-input:focus,.ks-select:focus,.ks-textarea:focus{border-color:#9a792e;box-shadow:0 0 0 3px #c7a84d1c}
+ .ks-input:disabled{background:#f0f2f5;color:#646d79}
+ .ks-field small{line-height:1.6}
+ .ks-field-error{color:#b1303d}
+ button,a,input,select,textarea{touch-action:manipulation}
+ button:disabled{cursor:not-allowed}
+ .ks-card{border-radius:12px}
+ .password-dialog,.custom-dialog,.order-dialog,.payment-dialog{border-radius:16px;background:#fff;border-color:#dce0e6;box-shadow:0 24px 90px #10162038}
+ .password-dialog h2,.custom-dialog h2,.payment-dialog h2{color:#20242c}
+ .custom-step{border-radius:10px;background:#fff}
+ .step-title>span{background:#20242c;color:#eed698}
+ .upload-box{border-radius:10px;background:#f7f8fa}
+ .category-grid button,.option-grid button,.choices button{border-radius:7px}
+ .category-grid button.selected,.option-grid button.selected,.choices button.selected{background:#fff9e9;border-color:#ad8b37;color:#503e14}
+ .profile-card{border-radius:14px;box-shadow:0 5px 20px #17203305;padding:1.6rem}
+ .account-hero{background:#fff;border:1px solid #e0e3e8;border-radius:14px;padding:1.5rem}
+ .account-actions .ks-button{font-size:.75rem}
+ .avatar{background:#1b1e25;color:#e3c475;border-color:#1b1e25;font-family:var(--ks-font-body)}
+ .verified-badge{border-radius:30px}
+ .request-list article{border-radius:14px;border-top:3px solid #d2ae58;box-shadow:0 6px 20px #17203305}
+ .request-list .quote{background:#f7f8fa;border-radius:9px;padding:1rem}
+ .request-list .quote button{grid-column:1/-1;margin-top:.6rem}
+ .request-list .status{border-radius:30px;font-family:var(--ks-font-body);text-transform:none}
+ .request-list .description{font-size:.875rem;line-height:1.7}
+ .request-list .options span{border-radius:5px;background:#f7f8fa}
+ .requests-page>header>a{color:#20242c;font:600 .8rem var(--ks-font-body);letter-spacing:0;text-transform:none;border:1px solid #c5cad3;border-radius:7px;padding:.8rem 1rem}
+ .empty,.empty-card,.empty-products,.collection-state{border-radius:14px;background:#fff;border-color:#e0e3e8}
+ .catalog-hero{background:#fff;border-color:#e0e3e8}
+
+
+ .catalog-hero--chain{background:#fff}
+ .collection-features span{background:#f3f4f7;border-color:#e0e3e8;color:#505968;border-radius:5px}
+ .search input{border-radius:7px 0 0 7px}.search button{border-radius:0 7px 7px 0;background:#20242c}
+ .filter-toggle,.sort select,.range input,.range button,.discount-filter select,.pagination button{border-radius:7px}
+ .filters{background:#fff}.results-head{font-size:.8rem}
+ .gallery .main-image{border-radius:16px;background:#f0f2f5}.thumbnails button{border-radius:7px;overflow:hidden}
+ .information .description{font-size:.875rem;line-height:1.8}.information h1{font-size:clamp(2rem,3.3vw,3rem)}
+ .personalization{border-radius:12px;background:#fff9ec;border-color:#e8d5a3}
+ .product-assistance{padding:1.2rem;background:#1a1d24;border:1px solid #1a1d24;border-radius:12px;color:#fff}
+ .product-assistance p{color:#fff;font-size:1.25rem}.product-assistance small{color:#c8cbd0}
+ .product-assistance .ks-button--outline{color:#eed492;border-color:#8f7944}
+ .demo-purchase .add-cart-button{width:100%}
+ .summary-card,.cart-layout aside{background:#fff;border-color:#e0e3e8;box-shadow:0 6px 20px #17203305}
+ .payment-card{border-color:#e0e3e8}.payment-button{background:#e3c475}
+ .item-symbol{background:#20242c;color:#e3c475}
+ .cart-item{background:#fff;border:1px solid #e0e3e8;border-radius:12px;padding:1.25rem;margin-bottom:1rem}
+ .cart-item .item-info>a{font-weight:500;color:#20242c}
+ .checkout-grid .ks-eyebrow,.cart-layout .ks-eyebrow{color:#826322}
+ .cart-page p,.cart-page small,.checkout-page p,.orders-page p,.order-dialog p{color:#59616e}
+ .orders-page article{border-color:#e0e3e8;box-shadow:0 6px 20px #17203305}
+ .orders-page .payment-label{color:#826322}.demo-notice,.demo-note{background:#fff8e7;border-color:#e9d8aa}
+ .auth-page{background:#f7f8fa}.auth-card{border:1px solid #e0e3e8;border-radius:16px;background:#fff;padding:2rem}
+ .auth-brand{border-radius:9px}.auth-card footer{border-color:#e0e3e8}
+ .customer-back{display:inline-flex;align-items:center;gap:.5rem;min-height:40px;margin-bottom:1rem;padding:.5rem .8rem;border:1px solid #d6dbe3;border-radius:8px;background:#fff;color:#414957;font:500 .78rem var(--ks-font-body);letter-spacing:0;text-transform:none;text-decoration:none}
+ .customer-back:hover{background:#eef0f4;border-color:#aab2bf}.customer-back:focus-visible{outline:2px solid #826322;outline-offset:3px}
+ @media(max-width:40rem){.ks-container{width:calc(100% - 2rem)}.account-hero,.profile-card{padding:1.1rem}.cart-item{padding:1rem}.auth-card{width:calc(100% - 2rem);padding:1.5rem;margin:1rem auto}.account-actions{gap:.5rem}}
+}
+@media(max-width:48rem){.storefront-shell input,.storefront-shell select,.storefront-shell textarea,app-auth-page input{font-size:1rem!important}}

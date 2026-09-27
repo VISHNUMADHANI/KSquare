@@ -1,0 +1,20 @@
+<div class="admin-shell">
+<a class="skip-link" href="#admin-content">Skip to content</a>
+<aside id="admin-navigation" class="admin-sidebar" [class.admin-sidebar--open]="navigationOpen()" [inert]="mobile() && !navigationOpen()" [ksDialogFocus]="mobile() && navigationOpen()" (ksDialogDismiss)="closeNavigation()" [attr.role]="mobile() ? 'dialog' : null" [attr.aria-modal]="mobile() && navigationOpen() ? true : null" aria-label="Admin navigation">
+  <button class="nav-close" type="button" aria-label="Close navigation" (click)="closeNavigation()">&times;</button>
+  <a routerLink="/admin" class="admin-sidebar__brand" aria-label="K Square admin overview" (click)="closeNavigation()"><ks-brand-logo presentation="storefront" /></a>
+  
+  <nav aria-label="Main">@for (link of links; track link.path) { <a [routerLink]="link.path" [class.custom-nav]="link.path === '/admin/custom-requests'" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: link.path === '/admin' }" ariaCurrentWhenActive="page" (click)="closeNavigation()"><svg viewBox="0 0 24 24" aria-hidden="true"><path [attr.d]="link.icon" /></svg><span>{{ link.label }}</span></a> }</nav>
+  <div class="admin-sidebar__footer"><a routerLink="/">View storefront <span aria-hidden="true">&#8599;</span></a><button type="button" (click)="logout()">Sign out <span aria-hidden="true">&#8594;</span></button></div>
+</aside>
+@if (navigationOpen()) { <button class="admin-backdrop" type="button" aria-label="Close navigation" tabindex="-1" (click)="closeNavigation()"></button> }
+<div class="admin-main" [inert]="mobile() && navigationOpen()">
+  <header class="admin-topbar">
+    <button class="menu-toggle" type="button" (click)="navigationOpen.set(true)" aria-label="Open navigation" aria-controls="admin-navigation" [attr.aria-expanded]="navigationOpen()"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h16 M4 12h16 M4 18h16" /></svg></button>
+    <div class="breadcrumb"><strong>{{ pageTitle() }}</strong></div>
+    <div class="admin-account"><span class="account-avatar" aria-hidden="true">{{ initials() }}</span><div><strong>{{ user()?.fullName || 'Administrator' }}</strong><small>Administrator</small></div></div>
+  </header>
+  <main id="admin-content" tabindex="-1"><router-outlet /></main>
+  <footer class="workspace-footer"><span>K Square &middot; Gems & Jewellery</span><span>Administration</span></footer>
+</div>
+</div>

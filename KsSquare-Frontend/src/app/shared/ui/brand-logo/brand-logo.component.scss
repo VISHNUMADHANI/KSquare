@@ -1,0 +1,9 @@
+:host { display: inline-block; line-height: 0; }
+.brand-frame { display: block; }
+img { width: auto; height: clamp(2.5rem,5vw,4rem); object-fit: contain; }
+.brand-frame--symbol img { aspect-ratio: 1; }
+.brand-frame--storefront { position: relative; width: 9rem; height: 7.5rem; overflow: hidden; }
+.brand-frame--storefront img { position: absolute; width: 15rem; height: 15rem; max-width: none; left: 50%; top: 50%; transform: translate(-50%,-50%); }
+.brand-frame--storefront.brand-frame--symbol { width: 7rem; height: 6rem; }
+.brand-frame--storefront.brand-frame--symbol img { width: 11.5rem; height: 11.5rem; top: 46%; }
+@media(max-width:48rem) { .brand-frame--storefront { width: 7rem; height: 5.8rem; } .brand-frame--storefront img { width: 11.6rem; height: 11.6rem; } }

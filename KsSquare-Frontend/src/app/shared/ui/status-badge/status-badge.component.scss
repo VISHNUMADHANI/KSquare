@@ -1,0 +1,5 @@
+.badge { display: inline-flex; border: 1px solid var(--ks-color-border-strong); padding: .3rem .55rem; color: var(--ks-color-text-muted); font: 500 .65rem/1 var(--ks-font-mono); letter-spacing: .08em; text-transform: uppercase; }
+.badge--gold { border-color: var(--ks-color-gold-deep); color: var(--ks-color-gold-light); }
+.badge--success { border-color: #166534; color: #86efac; }
+.badge--warning { border-color: #854d0e; color: #fde047; }
+.badge--danger { border-color: #7f1d1d; color: #fca5a5; }

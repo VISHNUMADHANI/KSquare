@@ -1,0 +1,36 @@
+.catalog-hero { width:min(calc(100% - 3rem),80rem);margin:1.25rem auto 0;padding:1.65rem 1.8rem;border:1px solid var(--ks-color-border);border-radius:16px;background:#fff; }
+.catalog-hero>.ks-container{width:100%;margin:0}.catalog-hero .ks-eyebrow{margin:0;color:#826322;font-size:.65rem;letter-spacing:.12em}
+.catalog-hero h1 { max-width:100%;margin:.5rem 0 .6rem;font:600 clamp(1.5rem,2.3vw,2rem)/1.25 var(--ks-font-body);letter-spacing:-.025em; }
+.catalog-hero p:not(.ks-eyebrow) { max-width:42rem;margin:0;color:var(--ks-color-text-muted);font-size:.83rem;line-height:1.7; }
+.catalog-shell { padding-block: 1.25rem 4rem; }
+.catalog-toolbar { display: grid; grid-template-columns: minmax(12rem,1fr) auto auto; align-items: center; gap: 1rem; padding-bottom: 1.5rem; border-bottom: 1px solid var(--ks-color-border); }
+.search { display: flex; max-width: 32rem; }
+.search input, .sort select, .range input, .discount-filter select { width: 100%; min-width: 0; min-height: 2.9rem; border: 1px solid var(--ks-color-border-strong); background: #fff; padding: .75rem; color: var(--ks-color-text); font-size: .8rem; }
+.search button, .filter-toggle, .range button, .pagination button, .results button { min-height: 2.9rem; border: 1px solid var(--ks-color-border-strong); background: transparent; padding: .7rem 1rem; color: var(--ks-color-text); cursor: pointer; font-size: .75rem; }
+.search button { background: #171717; color: #fff; border-color: #171717; }
+.filter-toggle { display: flex; gap: .5rem; align-items: center; }
+.filter-toggle span { background: #171717; color: #fff; border-radius: 50%; min-width: 1.3rem; }
+.sort { display: flex; align-items: center; gap: .6rem; color: var(--ks-color-text-muted); font-size: .75rem; }
+.filter-backdrop { position: fixed; inset: 0; z-index: 69; border: 0; background: rgb(20 18 14 / 50%); backdrop-filter: blur(3px); cursor: pointer; }
+.filters { position: fixed; z-index: 70; inset: 0 0 0 auto; display: grid; width: min(92vw, 26rem); align-content: start; gap: 1.5rem; overflow-y: auto; background: var(--ks-color-canvas); padding: 1.5rem; box-shadow: -1rem 0 3rem #24211a1a; transform: translateX(105%); visibility: hidden; transition: transform .22s, visibility .22s; }
+.filters--open { transform: translateX(0); visibility: visible; transition: transform .22s; }
+.filters-head { display: flex; align-items: center; justify-content: space-between; gap: .7rem; border-bottom: 1px solid var(--ks-color-border); padding-bottom: 1rem; }
+.filters-head h2 { margin: 0; font: 1.5rem var(--ks-font-display); }
+.filters-head > div { display: flex; align-items: center; }
+.filters-head button { min-height: 2.75rem; border: 0; background: transparent; color: var(--ks-color-gold); cursor: pointer; font-size: .75rem; }
+.filters-head .filter-close { min-width: 2.75rem; font-size: 1.8rem; }
+.range, .discount-filter { display: grid; gap: .6rem; }
+.range > span, .discount-filter > span { color: var(--ks-color-text-muted); font-size: .75rem; }
+.range > div { display: grid; grid-template-columns: 1fr 1fr; gap: .6rem; }
+.range button { justify-self: start; }
+.results-head { display: flex; justify-content: space-between; padding-block: 1.2rem; color: var(--ks-color-text-muted); font-size: .75rem; }
+.results-head p { margin: 0; }
+.product-grid, .loading-grid { display: grid; grid-template-columns: repeat(4,minmax(0,1fr)); gap: 1.5rem; }
+.loading-grid div { aspect-ratio: .75; background: #edeae1; animation: shimmer 1.2s infinite alternate; }
+.pagination { display: flex; align-items: center; justify-content: center; gap: 1rem; margin-top: 2.5rem; font-size: .8rem; }
+.pagination button:disabled { opacity: .4; }
+@keyframes shimmer { to { opacity: .5; } }
+@media(max-width:64rem) { .product-grid,.loading-grid { grid-template-columns:repeat(3,minmax(0,1fr)); gap: 1rem; } }
+@media(max-width:48rem) { .catalog-hero { padding:1.25rem; } .catalog-toolbar { grid-template-columns:1fr auto; gap: .7rem; } .sort { grid-column: 1/-1; justify-self: end; } .product-grid,.loading-grid { grid-template-columns:repeat(2,minmax(0,1fr)); gap: .75rem; } }
+
+@media(max-width:40rem){.catalog-hero{width:calc(100% - 2rem);margin-top:1rem}}

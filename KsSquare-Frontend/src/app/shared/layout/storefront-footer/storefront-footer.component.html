@@ -1,0 +1,8 @@
+<footer class="footer">
+  <div class="ks-container footer__grid">
+    <section class="footer__brand" aria-label="K Square"><a routerLink="/" aria-label="K Square home"><ks-brand-logo presentation="storefront" /></a><p>For the everyday. For the extraordinary.<br>Jewellery that feels like you.</p><span class="footer__signature">A personal expression, beautifully considered.</span></section>
+    <nav aria-label="Collections"><h2>Explore</h2><ul>@for (item of navigation; track item.label) { <li><a [routerLink]="item.path">{{ item.label }}</a></li> }</ul></nav>
+    <nav aria-label="Customer care"><h2>Your K Square</h2><ul class="footer__account"><li><a routerLink="/return-policy">Returns &amp; refunds</a></li><li><a routerLink="/orders">My orders</a></li><li><a routerLink="/cart">Shopping bag</a></li><li><a routerLink="/profile">My account</a></li><li><a routerLink="/custom/requests">My custom requests</a></li><li><a routerLink="/custom">Create a custom piece</a></li></ul><p class="footer__help">An idea in mind? Share your inspiration with our team through a custom request.</p></nav>
+  </div>
+  <div class="ks-container footer__bottom"><span>© {{ year }} K Square Gems &amp; Jewellery</span><span>Distinctive by design. Personal by nature.</span></div>
+</footer>
