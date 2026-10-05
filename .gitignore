@@ -4,6 +4,7 @@
 !/KsSquare-Frontend/
 !/.gitignore
 !/README.md
+!/PROJECT_HANDOFF.md
 # Secrets and local configuration
 **/.env
 **/.env.*
