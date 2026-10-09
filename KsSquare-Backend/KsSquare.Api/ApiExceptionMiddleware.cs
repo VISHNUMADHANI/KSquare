@@ -19,6 +19,11 @@ public sealed class ApiExceptionMiddleware(RequestDelegate next, ILogger<ApiExce
             context.Response.StatusCode = StatusCodes.Status503ServiceUnavailable;
             await context.Response.WriteAsJsonAsync(new { error = exception.Message });
         }
+        catch (KsSquare.Application.Abstractions.Authentication.OtpDeliveryException exception)
+        {
+            context.Response.StatusCode = StatusCodes.Status503ServiceUnavailable;
+            await context.Response.WriteAsJsonAsync(new { error = exception.Message });
+        }
         catch (AuthUnauthorizedException exception)
         {
             context.Response.StatusCode = StatusCodes.Status401Unauthorized;

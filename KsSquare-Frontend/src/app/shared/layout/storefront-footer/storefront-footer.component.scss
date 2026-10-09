@@ -14,3 +14,11 @@ ul a:hover { color: white; text-decoration: underline; text-underline-offset: 5p
 @media(max-width:48rem) { .footer__grid { grid-template-columns: 1fr 1fr; gap: 1.5rem 1rem; padding-block: 1.5rem; } .footer__brand { grid-column: 1 / -1; } .footer__bottom { flex-direction: column; font-size: .65rem; } }
 
 .footer{background:#08090c;border-top:1px solid #292c33}.footer h2{color:#e3c475}.footer ul a{color:#cbd0d8;font-size:.8rem}.footer .footer__help,.footer p{color:#aeb6c2}.footer__bottom{border-color:#292c33;color:#aeb6c2}.footer__grid{padding-block:2rem}.footer__brand .footer__signature{color:#e3c475}
+
+.footer__contact { grid-column: 1 / -1; border-top: 1px solid #37332b; padding-top: 1.25rem; }
+.footer__contact ul { display: flex; flex-wrap: wrap; gap: .5rem 2rem; }
+.footer__contact a { overflow-wrap: anywhere; }
+
+.footer .footer__instagram { display: inline-flex; justify-content: center; align-items: center; width: 44px; min-height: 44px; padding: 0; border: 1px solid #665638; border-radius: 50%; color: #e3c475; }
+.footer .footer__instagram:hover { color: #fff; border-color: #e3c475; }
+.footer .footer__instagram:focus-visible { outline: 2px solid #e3c475; outline-offset: 3px; }

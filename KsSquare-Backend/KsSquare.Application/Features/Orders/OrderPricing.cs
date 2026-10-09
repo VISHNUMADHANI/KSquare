@@ -43,7 +43,7 @@ public static class OrderPricing
         var details = selected.Select(o => o.Name).ToList();
         if (product.SupportsNamePersonalization)
         {
-            if (!Regex.IsMatch(line.PersonalizedName ?? "", @"\A[A-Za-z]{1,8}\z")) throw new CatalogValidationException("Enter 1 to 8 letters for the personalized name.");
+            if (!Regex.IsMatch(line.PersonalizedName ?? "", @"\A[A-Za-z0-9]{1,8}\z")) throw new CatalogValidationException("Enter 1 to 8 letters or numbers for the personalized name.");
             price = Discount(product.NameFixedPrice + Math.Max(0, line.PersonalizedName!.Length - product.IncludedNameLetters) * product.NamePricePerLetter, product.DiscountPercentage);
             details.Add("Name: " + line.PersonalizedName);
         }

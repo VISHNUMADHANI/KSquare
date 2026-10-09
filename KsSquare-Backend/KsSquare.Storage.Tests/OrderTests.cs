@@ -15,7 +15,7 @@ public sealed class OrderTests
     [Theory] [InlineData(0)] [InlineData(-1)] [InlineData(21)]
     public void RejectsInvalidQuantity(int quantity) { var p = Product(); Assert.Throws<CatalogValidationException>(() => OrderPricing.Price(p, new(p.Id, quantity, [], null))); }
     [Fact] public void RejectsUnavailableProduct() { var p = Product(false); Assert.Throws<CatalogValidationException>(() => OrderPricing.Price(p, new(p.Id, 1, [], null))); }
-    [Theory] [InlineData("")] [InlineData("NINECHARS")] [InlineData("A B")] [InlineData("123")] [InlineData("AB\n")]
+    [Theory] [InlineData("")] [InlineData("NINECHARS")] [InlineData("A B")] [InlineData("AB!")] [InlineData("AB-12")] [InlineData("AB1234567")] [InlineData("AB\n")]
     public void RejectsInvalidPersonalization(string name) { var p = Product(personalized:true); Assert.Throws<CatalogValidationException>(() => OrderPricing.Price(p, new(p.Id, 1, [], name))); }
     [Fact] public void AcceptsEightLetterNameAndPreservesNote()
     {
@@ -24,7 +24,7 @@ public sealed class OrderTests
         var copy=System.Text.Json.JsonSerializer.Deserialize<OrderItemDto>(System.Text.Json.JsonSerializer.Serialize(result));
         Assert.Equal(result.PersonalizationNote,copy!.PersonalizationNote);
     }
-    [Theory] [InlineData("A",90)] [InlineData("ABCDE",90)] [InlineData("ABCDEF",103.5)] [InlineData("ABCDEFG",117)] [InlineData("ABCDEFGH",130.5)]
+    [Theory] [InlineData("A",90)] [InlineData("ABCDE",90)] [InlineData("ABCDEF",103.5)] [InlineData("ABCDEFG",117)] [InlineData("ABCDEFGH",130.5)] [InlineData("Alex1",90)] [InlineData("Alex12",103.5)] [InlineData("AB123456",130.5)] [InlineData("2026",90)]
     public void IncludedLettersOnlyChargeExtrasThenDiscount(string name, decimal expected)
     { var p=Product(personalized:true);p.SetIncludedNameLetters(5);Assert.Equal(expected,OrderPricing.Price(p,new(p.Id,1,[],name)).UnitPrice); }
     [Fact] public void OrdinaryProductsAcceptNotesWithoutChangingPrice()

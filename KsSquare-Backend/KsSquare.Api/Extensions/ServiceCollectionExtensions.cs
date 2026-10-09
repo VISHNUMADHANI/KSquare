@@ -35,7 +35,10 @@ public static class ServiceCollectionExtensions
         services.AddScoped<IAuthService, AuthService>();
         services.AddSingleton<IPasswordService, Pbkdf2PasswordService>();
         services.AddSingleton<IOtpSecurityService, OtpSecurityService>();
-        services.AddSingleton<IOtpEmailSender, DevelopmentOtpEmailSender>();
+        if (string.Equals(configuration["OTP_EMAIL_PROVIDER"], "development", StringComparison.OrdinalIgnoreCase))
+            services.AddSingleton<IOtpEmailSender, DevelopmentOtpEmailSender>();
+        else
+            services.AddHttpClient<IOtpEmailSender, ResendOtpEmailSender>(client => client.Timeout = TimeSpan.FromSeconds(15));
         services.AddR2ObjectStorage(configuration);
         services.AddHttpClient("EtsyReviews", client => client.Timeout = TimeSpan.FromSeconds(12));
         services.AddSingleton<KsSquare.Api.EtsyReviewsService>();

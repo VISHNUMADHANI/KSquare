@@ -90,7 +90,10 @@ public sealed class AuthService(IAuthRepository repository, IPasswordService pas
 
     private async Task<string> AddOtpAsync(AppUser user, OtpPurpose purpose, CancellationToken cancellationToken)
     {
-        var now = DateTimeOffset.UtcNow; foreach (var existing in await repository.GetOpenOtpsAsync(user.Id, purpose, cancellationToken)) existing.Invalidate(now);
+        var now = DateTimeOffset.UtcNow;
+        var latest = await repository.GetLatestOtpAsync(user.Id, purpose, cancellationToken);
+        if (latest != null && now - latest.CreatedAt < TimeSpan.FromSeconds(60)) throw new AuthValidationException("Please wait 60 seconds before requesting another code.");
+        foreach (var existing in await repository.GetOpenOtpsAsync(user.Id, purpose, cancellationToken)) existing.Invalidate(now);
         var code = otpSecurity.GenerateCode(); repository.AddOtp(new EmailOtp(user.Id, purpose, otpSecurity.HashCode(code), now.Add(OtpLifetime))); return code;
     }
 

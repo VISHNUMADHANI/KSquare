@@ -31,5 +31,6 @@ export class AdminCatalogService {
     const body = new FormData(); body.append('file', file); body.append('altText', altText);
     return this.http.post<ProductMedia>(`${this.baseUrl}/products/${productId}/media`, body);
   }
+  downloadMedia(productId: string, mediaId: string): Observable<Blob> { return this.http.get(`${this.baseUrl}/products/${productId}/media/${mediaId}/download`, { responseType: 'blob' }); }
   deleteMedia(productId: string, mediaId: string): Observable<void> { return this.http.delete<void>(`${this.baseUrl}/products/${productId}/media/${mediaId}`); }
 }

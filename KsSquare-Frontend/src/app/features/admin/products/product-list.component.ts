@@ -15,6 +15,8 @@ export class ProductListComponent implements OnInit {
   private readonly catalog = inject(AdminCatalogService);
   protected readonly products = signal<Product[]>([]); protected readonly loading = signal(true); protected readonly error = signal('');
   protected readonly search = signal(''); protected readonly categoryFilters = signal<string[]>([]); protected readonly subcategoryFilters = signal<string[]>([]); protected readonly optionFilters = signal<string[]>([]); protected readonly availabilityFilters = signal<string[]>([]); protected readonly statusFilters = signal<string[]>([]);
+  protected readonly duplicating = signal(false);
+  protected duplicateProduct(event: Event, product: Product): void { event.stopPropagation(); this.openEditor(product.id); this.duplicating.set(true); }
   protected readonly editorOpen = signal(false); protected readonly editingId = signal<string | null>(null);
   protected readonly availabilityChoices: MultiSelectFilterOption[] = [{ id: 'available', name: 'Available' }, { id: 'unavailable', name: 'Unavailable' }];
   protected readonly statusChoices: MultiSelectFilterOption[] = [{ id: 'active', name: 'Active' }, { id: 'draft', name: 'Draft' }];
@@ -37,7 +39,7 @@ export class ProductListComponent implements OnInit {
   protected clearFilters(): void { this.search.set(''); this.categoryFilters.set([]); this.subcategoryFilters.set([]); this.optionFilters.set([]); this.availabilityFilters.set([]); this.statusFilters.set([]); }
   protected addProduct(): void { this.openEditor(null); }
   protected editProduct(product: Product): void { this.openEditor(product.id); }
-  protected closeEditor(): void { this.editorOpen.set(false); this.editingId.set(null); }
+  protected closeEditor(): void { this.editorOpen.set(false); this.editingId.set(null); this.duplicating.set(false); }
   protected saved(): void { this.load(); this.closeEditor(); }
   canLeaveProducts(): boolean { if (!this.editorOpen()) return true; this.dismissEditor(); return false; }
   protected remove(event: Event, product: Product): void { event.stopPropagation(); if (!confirm(`Delete product “${product.name}”? Its uploaded images will also be removed.`)) return; this.catalog.deleteProduct(product.id).subscribe({ next: () => this.load(), error: () => this.error.set('The product could not be deleted.') }); }

@@ -7,11 +7,14 @@ import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angula
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { concatMap, finalize, forkJoin, from, map, Observable, of, switchMap, tap, toArray } from 'rxjs';
 import { AdminCatalogService } from '../../../core/catalog/admin-catalog.service';
-import { Category, Product, ProductOption, ProductOptionType, SaveProduct, SaveProductBraceletVariant, SaveProductChainVariant, SaveProductPendantVariant } from '../../../core/catalog/catalog.models';
+import { Category, Product, ProductMedia, ProductOption, ProductOptionType, SaveProduct, SaveProductBraceletVariant, SaveProductChainVariant, SaveProductPendantVariant } from '../../../core/catalog/catalog.models';
 import { KsButtonDirective } from '../../../shared/ui';
 
 @Component({ selector: 'app-product-form', standalone: true, imports: [ReactiveFormsModule, RouterLink, CurrencyPipe, KsButtonDirective], changeDetection: ChangeDetectionStrategy.OnPush, templateUrl: './product-form.component.html', styleUrls: ['./product-form.component.scss', './product-chain-pricing.component.scss','./product-editor.component.scss'] })
 export class ProductFormComponent implements OnInit {
+  @Input() duplicateMode = false;
+  private duplicateBaseline: string | null = null;
+  protected readonly copiedMedia = signal<ProductMedia[]>([]);
   @Input() dialogMode = false; @Input() dialogProductId: string | null = null; @Output() readonly cancelled = new EventEmitter<void>(); @Output() readonly completed = new EventEmitter<Product>();
   private readonly catalog = inject(AdminCatalogService); private readonly route = inject(ActivatedRoute); private readonly router = inject(Router); private readonly destroyRef = inject(DestroyRef);
   private readonly previewUrls = new Map<File, string>();
@@ -33,7 +36,7 @@ export class ProductFormComponent implements OnInit {
   protected readonly hasChainDiamondSizes = computed(() => this.chainVariants().some(variant => !!variant.chainDiamondSizeOptionId));
   protected readonly hasBraceletSizes = computed(() => this.braceletVariants().some(variant => !!variant.braceletSizeOptionId));
   protected readonly hasBraceletStoneSizes = computed(() => this.braceletVariants().some(variant => !!variant.braceletStoneSizeOptionId));
-  protected readonly totalImageCount = computed(() => (this.product()?.media.length ?? 0) + this.selectedFiles().length);
+  protected readonly totalImageCount = computed(() => (this.product()?.media.length ?? 0) + this.copiedMedia().length + this.selectedFiles().length);
   protected readonly form = new FormGroup({
     name: new FormControl('', { nonNullable: true, validators: [Validators.required, Validators.maxLength(180)] }),
     categoryId: new FormControl('', { nonNullable: true, validators: [Validators.required] }), subcategoryIds: new FormControl<string[]>([], { nonNullable: true }),
@@ -47,19 +50,19 @@ export class ProductFormComponent implements OnInit {
     this.form.controls.supportsNamePersonalization.valueChanges.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(enabled => { this.namePersonalization.set(enabled); this.rebuildPendantVariants(); });
     this.form.valueChanges.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(value => this.previewPrice.set(Math.round(((value.originalPrice ?? 0) * (100 - (value.discountPercentage ?? 0)) / 100) * 100) / 100));
     this.form.controls.categoryId.valueChanges.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(categoryId => { this.selectedCategoryId.set(categoryId); if(!this.isPendantCategory())this.namePersonalization.set(false); if(!this.isPendantCategory())this.form.patchValue({supportsNamePersonalization:false,namePricePerLetter:0},{emitEvent:false}); const allowed = new Set(this.categories().filter(item => item.parentId === categoryId).map(item => item.id)); this.form.controls.subcategoryIds.setValue(this.form.controls.subcategoryIds.value.filter(id => allowed.has(id)), { emitEvent: false }); const allowedTypes = new Set(this.allowedOptionGroups(categoryId).map(group => group.type)); this.form.controls.optionIds.setValue(this.form.controls.optionIds.value.filter(id => { const option = this.options().find(item => item.id === id); return !!option && allowedTypes.has(option.type); }), { emitEvent: false }); this.rebuildChainVariants(); this.rebuildBraceletVariants(); this.rebuildPendantVariants(); });
-    this.productId.set(this.dialogMode ? this.dialogProductId : this.route.snapshot.paramMap.get('id'));
+    this.productId.set(this.duplicateMode ? null : this.dialogMode ? this.dialogProductId : this.route.snapshot.paramMap.get('id'));
     forkJoin({ categories: this.catalog.getCategories(), options: this.catalog.getProductOptions() }).subscribe({ next: value => { this.categories.set(value.categories); this.options.set(value.options); this.loadProduct(); }, error: error => { this.loading.set(false); this.error.set(this.message(error)); } });
   }
 
   protected save(): void {
-    if (this.saving()) return;
+    if (this.saving() || this.loading() || (this.duplicateMode && !this.hasDuplicateChanges())) return;
     if (this.form.invalid) { this.form.markAllAsTouched(); this.error.set('Complete the required details and enter a valid price.'); return; }
     if(this.isPendantCategory()&&this.form.controls.isActive.value&&this.pendantVariants().some(v=>v.originalPrice<=0)){this.error.set('Enter a price for every selected pendant size, or remove all sizes to use one price.');return;}
     if (this.isChainCategory() && this.form.controls.isActive.value && (!this.chainVariants().length || this.chainVariants().some(variant => variant.originalPrice <= 0))) { this.error.set('Select at least one Chain size and enter a price greater than zero for every generated combination before activating the product.'); return; }
     if (this.isBraceletCategory() && this.form.controls.isActive.value && this.braceletVariants().some(variant => variant.originalPrice <= 0)) { this.error.set('Enter a price greater than zero for every generated Bracelet combination before activating the product.'); return; }
     if (this.totalImageCount() > 6) { this.error.set('A product can have a maximum of 6 photos and videos combined.'); return; }
     const value = this.form.getRawValue();
-    if (value.isActive && !(this.product()?.media.some(m => m.contentType.startsWith('image/')) || this.selectedFiles().some(f => f.type.startsWith('image/')))) { this.error.set('Select at least one image before activating the product, or save it as an inactive draft.'); return; }
+    if (value.isActive && !(this.product()?.media.some(m => m.contentType.startsWith('image/')) || this.copiedMedia().some(m => m.contentType.startsWith('image/')) || this.selectedFiles().some(f => f.type.startsWith('image/')))) { this.error.set('Select at least one image before activating the product, or save it as an inactive draft.'); return; }
     const configuredVariants = this.isChainCategory() ? this.chainVariants().filter(variant => variant.originalPrice > 0) : [];
     const configuredBraceletVariants = this.isBraceletCategory() ? this.braceletVariants().filter(variant => variant.originalPrice > 0) : [];
     const configuredPendantVariants=this.isPendantCategory()?this.pendantVariants().filter(v=>v.originalPrice>0):[];
@@ -70,7 +73,8 @@ export class ProductFormComponent implements OnInit {
     const firstRequest = needsDraftStage ? { ...request, isActive: false } : request;
     const wasNew = !this.productId();
     const initial = this.productId() ? this.catalog.updateProduct(this.productId()!, firstRequest) : this.catalog.createProduct(firstRequest);
-    initial.pipe(
+    this.prepareCopiedMedia().pipe(
+      switchMap(() => initial),
       tap(product => { this.product.set(product); if (wasNew) this.productId.set(product.id); }),
       switchMap(product => this.uploadSelected(product)),
       switchMap(product => request.isActive && !product.isActive ? this.catalog.updateProduct(product.id, request) : this.catalog.getProduct(product.id)),
@@ -85,7 +89,7 @@ export class ProductFormComponent implements OnInit {
     const existing = this.selectedFiles();
     const existingKeys = new Set(existing.map(file => this.fileKey(file)));
     const newFiles = files.filter(file => !existingKeys.has(this.fileKey(file)));
-    if ((this.product()?.media.length ?? 0) + existing.length + newFiles.length > 6) { this.error.set(`You can add only ${6 - this.totalImageCount()} more file(s).`); return; }
+    if ((this.product()?.media.length ?? 0) + this.copiedMedia().length + existing.length + newFiles.length > 6) { this.error.set(`You can add only ${6 - this.totalImageCount()} more file(s).`); return; }
     newFiles.forEach(file => this.previewUrls.set(file, URL.createObjectURL(file)));
     this.selectedFiles.set([...existing, ...newFiles]);
     if (newFiles.length) this.form.markAsDirty();
@@ -109,6 +113,17 @@ export class ProductFormComponent implements OnInit {
   protected updateBraceletAvailability(index: number, isAvailable: boolean): void { this.braceletVariants.update(items => items.map((item, itemIndex) => itemIndex === index ? { ...item, isAvailable } : item)); this.form.markAsDirty(); }
   protected deleteMedia(mediaId: string): void { const id = this.productId(); if (!id || !confirm('Delete this product photo or video?')) return; this.catalog.deleteMedia(id, mediaId).subscribe({ next: () => { const current = this.product(); if (current) this.product.set({ ...current, media: current.media.filter(media => media.id !== mediaId) }); }, error: error => this.error.set(this.message(error)) }); }
 
+  protected removeCopiedMedia(id: string): void { this.copiedMedia.update(items => items.filter(item => item.id !== id)); this.form.markAsDirty(); }
+  private prepareCopiedMedia(): Observable<void> {
+    const media = this.copiedMedia();
+    if (!media.length || !this.dialogProductId) return of(undefined);
+    // Fetch originals only when saving. Opening the form needs only lightweight metadata.
+    return from(media).pipe(concatMap(item => this.catalog.downloadMedia(this.dialogProductId!, item.id).pipe(map(blob => new File([blob], item.objectKey.split('/').pop() || item.id, {type: item.contentType, lastModified: 0})))), toArray(), tap(files => {
+      files.forEach(file => this.previewUrls.set(file, URL.createObjectURL(file)));
+      this.selectedFiles.update(existing => [...files, ...existing]);
+      this.copiedMedia.set([]);
+    }), map(() => undefined));
+  }
   private uploadSelected(product: Product): Observable<Product> {
     const files = [...this.selectedFiles()]; if (!files.length) return of(product);
     return from(files).pipe(concatMap(file => this.catalog.uploadMedia(product.id, file, this.form.controls.name.value).pipe(tap(media => { this.revokePreview(file); this.selectedFiles.update(current => current.filter(item => item !== file)); this.product.update(current => current ? { ...current, media: [...current.media, media] } : current); }))), toArray(), map(media => ({ ...product, media: [...product.media, ...media] })));
@@ -149,6 +164,12 @@ export class ProductFormComponent implements OnInit {
   private braceletVariantKey(variant: SaveProductBraceletVariant): string { return `${variant.braceletSizeOptionId}:${variant.braceletStoneSizeOptionId}`; }
   private syncBraceletStartingPrice(): void { const prices = this.braceletVariants().map(variant => variant.originalPrice).filter(price => price > 0); if (prices.length) this.form.controls.originalPrice.setValue(Math.min(...prices), { emitEvent: true }); }
   private toggleArrayControl(control: FormControl<string[]>, id: string, checked: boolean): void { const current = control.value; control.setValue(checked ? [...current, id] : current.filter(value => value !== id)); control.markAsDirty(); }
-  private loadProduct(): void { const id = this.productId(); if (!id) { this.loading.set(false); return; } this.catalog.getProduct(id).pipe(finalize(() => this.loading.set(false))).subscribe({ next: product => { this.product.set(product); this.selectedCategoryId.set(product.categoryId); this.form.reset({ name: product.name, categoryId: product.categoryId, subcategoryIds: product.subcategories.map(item => item.id), description: product.description, originalPrice: product.originalPrice, discountPercentage: product.discountPercentage, isAvailable: product.isAvailable, isActive: product.isActive, isFinalSale: product.isFinalSale ?? false, showInCustom: product.showInCustom, supportsNamePersonalization: product.supportsNamePersonalization, includedNameLetters: product.includedNameLetters ?? 1, namePricePerLetter: product.namePricePerLetter, optionIds: product.options.map(option => option.id) }); this.chainVariants.set(product.chainVariants.map(variant => ({ chainSizeOptionId: variant.chainSizeOptionId, chainWidthOptionId: variant.chainWidthOptionId, chainDiamondSizeOptionId: variant.chainDiamondSizeOptionId, originalPrice: variant.originalPrice, isAvailable: variant.isAvailable }))); this.braceletVariants.set(product.braceletVariants.map(variant => ({ braceletSizeOptionId: variant.braceletSizeOptionId, braceletStoneSizeOptionId: variant.braceletStoneSizeOptionId, originalPrice: variant.originalPrice, isAvailable: variant.isAvailable }))); this.rebuildChainVariants(); this.rebuildBraceletVariants(); this.rebuildPendantVariants(); this.pendantVariants.set((product.pendantVariants??[]).map(v=>({pendantSizeOptionId:v.pendantSizeOptionId,originalPrice:v.originalPrice,isAvailable:v.isAvailable})));if(!product.pendantVariants?.length&&this.isPendantCategory()){this.pendantVariants.set(this.selectedOptionsOfType('PendantSize').map(o=>({pendantSizeOptionId:o.id,originalPrice:product.supportsNamePersonalization?product.nameFixedPrice:product.originalPrice,isAvailable:product.isAvailable})));}this.rebuildPendantVariants();this.previewPrice.set(product.finalPrice); this.form.markAsPristine(); }, error: error => this.error.set(this.message(error)) }); }
+  private loadProduct(): void { const id = this.duplicateMode ? this.dialogProductId : this.productId(); if (!id) { this.loading.set(false); return; } this.catalog.getProduct(id).pipe(takeUntilDestroyed(this.destroyRef), finalize(() => this.loading.set(false))).subscribe({ next: product => { this.product.set(this.duplicateMode ? null : product); if(this.duplicateMode) this.copiedMedia.set(product.media); this.selectedCategoryId.set(product.categoryId); this.form.reset({ name: product.name, categoryId: product.categoryId, subcategoryIds: product.subcategories.map(item => item.id), description: product.description, originalPrice: product.originalPrice, discountPercentage: product.discountPercentage, isAvailable: product.isAvailable, isActive: product.isActive, isFinalSale: product.isFinalSale ?? false, showInCustom: product.showInCustom, supportsNamePersonalization: product.supportsNamePersonalization, includedNameLetters: product.includedNameLetters ?? 1, namePricePerLetter: product.namePricePerLetter, optionIds: product.options.map(option => option.id) }); this.chainVariants.set(product.chainVariants.map(variant => ({ chainSizeOptionId: variant.chainSizeOptionId, chainWidthOptionId: variant.chainWidthOptionId, chainDiamondSizeOptionId: variant.chainDiamondSizeOptionId, originalPrice: variant.originalPrice, isAvailable: variant.isAvailable }))); this.braceletVariants.set(product.braceletVariants.map(variant => ({ braceletSizeOptionId: variant.braceletSizeOptionId, braceletStoneSizeOptionId: variant.braceletStoneSizeOptionId, originalPrice: variant.originalPrice, isAvailable: variant.isAvailable }))); this.rebuildChainVariants(); this.rebuildBraceletVariants(); this.rebuildPendantVariants(); this.pendantVariants.set((product.pendantVariants??[]).map(v=>({pendantSizeOptionId:v.pendantSizeOptionId,originalPrice:v.originalPrice,isAvailable:v.isAvailable})));if(!product.pendantVariants?.length&&this.isPendantCategory()){this.pendantVariants.set(this.selectedOptionsOfType('PendantSize').map(o=>({pendantSizeOptionId:o.id,originalPrice:product.supportsNamePersonalization?product.nameFixedPrice:product.originalPrice,isAvailable:product.isAvailable})));}this.rebuildPendantVariants();this.previewPrice.set(product.finalPrice); this.form.markAsPristine(); if(this.duplicateMode) this.duplicateBaseline = this.duplicateSnapshot(); }, error: error => this.error.set(this.message(error)) }); }
+  protected hasDuplicateChanges(): boolean { return this.duplicateBaseline !== null && this.duplicateBaseline !== this.duplicateSnapshot(); }
+  private duplicateSnapshot(): string {
+    const value = this.form.getRawValue();
+    const sortRows = (rows: object[]) => rows.map(row => JSON.stringify(row)).sort();
+    return JSON.stringify({ ...value, name: value.name.trim(), description: value.description.trim(), optionIds: [...value.optionIds].sort(), subcategoryIds: [...value.subcategoryIds].sort(), chains: sortRows(this.chainVariants()), bracelets: sortRows(this.braceletVariants()), pendants: sortRows(this.pendantVariants()), files: this.selectedFiles().map(file => this.fileKey(file)), copiedMedia: this.copiedMedia().map(media => media.id), media: this.product()?.media.map(media => media.id) ?? [] });
+  }
   private message(error: unknown): string { return error instanceof HttpErrorResponse ? error.error?.error ?? 'The request could not be completed.' : 'The request could not be completed.'; }
 }

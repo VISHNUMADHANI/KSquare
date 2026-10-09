@@ -27,7 +27,7 @@ export class StorefrontProductDetailComponent implements OnInit {
   protected readonly canAddToCart = computed(() => {
     const item = this.product();
     return !!item?.isActive && !!item.isAvailable && this.displayedAvailability() && this.combinationSelectionComplete() && this.optionGroups().every(group => !!this.selectedOptions()[group.type])
-      && (!item.supportsNamePersonalization || (/^[A-Za-z]{1,8}$/.test(this.pendantName()) && !this.nameError()))
+      && (!item.supportsNamePersonalization || (/^[A-Za-z0-9]{1,8}$/.test(this.pendantName()) && !this.nameError()))
       && this.personalizationNote().length <= 1000 && Number.isFinite(this.purchaseAmount()) && this.purchaseAmount() > 0;
   });
   protected readonly purchaseAmount = computed(() => this.product()?.supportsNamePersonalization ? this.personalizedPrice() : this.displayFinalPrice());
@@ -65,7 +65,7 @@ export class StorefrontProductDetailComponent implements OnInit {
   protected selectOption(type: string, id: string): void { this.selectedOptions.update(current => ({ ...current, [type]: id })); }
   protected optionSelected(type: string, id: string): boolean { return this.selectedOptions()[type] === id; }
   protected optionDisabled(type: string, id: string): boolean { const selected = { ...this.selectedOptions(), [type]: id }; if(this.isPendantProduct()&&type==='PendantSize')return !this.product()?.pendantVariants?.some(v=>v.pendantSizeOptionId===id&&v.isAvailable); if (this.isChainProduct()) return !(this.product()?.chainVariants.some(variant => variant.isAvailable && (!selected['ChainSize'] || variant.chainSizeOptionId === selected['ChainSize']) && (!selected['ChainWidth'] || variant.chainWidthOptionId === selected['ChainWidth']) && (!selected['ChainDiamondSize'] || variant.chainDiamondSizeOptionId === selected['ChainDiamondSize'])) ?? false); if (this.isBraceletProduct() && type !== 'Color') return !(this.product()?.braceletVariants.some(variant => variant.isAvailable && (!selected['BraceletSize'] || variant.braceletSizeOptionId === selected['BraceletSize']) && (!selected['BraceletStoneSize'] || variant.braceletStoneSizeOptionId === selected['BraceletStoneSize'])) ?? false); return false; }
-  protected setName(value: string): void { if (!/^[A-Za-z]*$/.test(value)) { this.nameError.set('Use letters only. Spaces and symbols are not allowed.'); return; } this.nameError.set(''); this.pendantName.set(value.slice(0, 8)); }
+  protected setName(value: string): void { if (!/^[A-Za-z0-9]*$/.test(value)) { this.nameError.set('Use letters and numbers only. Spaces and symbols are not allowed.'); return; } this.nameError.set(''); this.pendantName.set(value.slice(0, 8)); }
   private selectDefaultOptions(product: Product): void {
     const pendant=[...(product.pendantVariants??[])].filter(v=>v.isAvailable).sort((a,b)=>a.finalPrice-b.finalPrice)[0];
     if(pendant){const selected:Record<string,string>={PendantSize:pendant.pendantSizeOptionId};for(const option of product.options)if(!selected[option.type])selected[option.type]=option.id;this.selectedOptions.set(selected);return;}
