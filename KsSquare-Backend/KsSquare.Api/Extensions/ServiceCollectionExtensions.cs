@@ -51,6 +51,6 @@ public static class ServiceCollectionExtensions
         var missingKeys = values.Where(entry => string.IsNullOrWhiteSpace(entry.Value)).Select(entry => entry.Key).ToArray();
         if (missingKeys.Length > 0) throw new InvalidOperationException($"Missing required database configuration: {string.Join(", ", missingKeys)}");
         if (!int.TryParse(values["DATABASE_PORT"], out var port)) throw new InvalidOperationException("DATABASE_PORT must be a valid integer.");
-        return new NpgsqlConnectionStringBuilder { Host = values["DATABASE_HOST"], Port = port, Database = values["DATABASE_NAME"], Username = values["DATABASE_USER"], Password = values["DATABASE_PASSWORD"], IncludeErrorDetail = false }.ConnectionString;
+        return new NpgsqlConnectionStringBuilder { Host = values["DATABASE_HOST"], Port = port, Database = values["DATABASE_NAME"], Username = values["DATABASE_USER"], Password = values["DATABASE_PASSWORD"], SslMode = values["DATABASE_HOST"]!.EndsWith(".supabase.com", StringComparison.OrdinalIgnoreCase) ? SslMode.Require : SslMode.Prefer, IncludeErrorDetail = false }.ConnectionString;
     }
 }

@@ -26,3 +26,5 @@
 **/Thumbs.db
 KsSquare-Backend/.product-cleanup/
 KsSquare-Backend/CustomerOrdersRepair/
+
+**/.vercel/
